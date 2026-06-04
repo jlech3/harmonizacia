@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b81d24">
+  <title>Kontráš — Harmonizácia ľudových piesní</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-role="kontras">
+  <header class="app-header">
+    <a class="back-link" href="index.html">← Menu</a>
+    <h1>Kontráš</h1>
+    <p class="tagline">Vyber tóninu a akord — ukážem ti hmaty akordu na viole a husliach.</p>
+  </header>
+
+  <main>
+    <section class="controls">
+      <label for="keySelect">Tónina</label>
+      <select id="keySelect"></select>
+      <span class="hint">Klikni na akord a pozri si jeho zloženie aj hmaty.</span>
+    </section>
+
+    <section class="functions" id="functions" aria-label="Harmonické funkcie"></section>
+
+    <section class="scale" id="scale" aria-label="Ďalšie akordy v tónine"></section>
+
+    <section class="detail" id="detail" hidden></section>
+
+    <section class="trainer" aria-label="Tréner kontra linky">
+      <h2>Tréner kontra linky</h2>
+      <p class="tr-intro">
+        Zadaj postupnosť akordov a tréner vyberie dvojhmaty pre kontru (violu).
+        <strong>Veľké písmeno = dur</strong>, malé = mol; <code>is</code>/<code>es</code> = krížik/béčko
+        (Cis, Es…), samostatné <code>B</code> = Bes, koncové <code>7</code> = septakord.
+        Tercia je povinná (určuje dur/mol), pri septakorde kontra hrá terciu + septimu.
+      </p>
+      <input id="progInput" type="text" autocomplete="off" spellcheck="false"
+             placeholder="napr.  C F G7 C   alebo   a d E7 a" value="C F G7 C">
+      <div class="prog-controls">
+        <button type="button" id="progPlay" class="play-btn">▶ Prehrať</button>
+        <button type="button" id="progStop" class="play-btn ghost">■ Stop</button>
+        <label class="tempo" for="progTempo">Tempo</label>
+        <input type="range" id="progTempo" min="60" max="160" value="104">
+        <span class="tempo-val" id="progTempoVal">104</span>
+      </div>
+      <div class="prog-errors" id="progErrors"></div>
+      <div class="prog-result" id="progResult"></div>
+    </section>
+  </main>
+
+  <script src="js/theory.js"></script>
+  <script src="js/instruments.js"></script>
+  <script src="js/fingerboard.js"></script>
+  <script src="js/kontra.js"></script>
+  <script src="js/bass.js"></script>
+  <script src="js/lib/Tone.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

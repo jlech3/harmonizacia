@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+
+# Ak neskôr pridáme nástroje (build, závislosti)
+node_modules/
+dist/
+
+# Lokálne nastavenia agenta
+.claude/

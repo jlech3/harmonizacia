@@ -1,0 +1,450 @@
+:root {
+  color-scheme: light;
+
+  /* Folklórna paleta — ľanové plátno + vyšívacie nite */
+  --bg: #f5efe1;            /* nebielené ľanové plátno */
+  --panel: #fffdf8;         /* teplá biela */
+  --ink: #2a2723;
+  --muted: #6e6456;
+  --line: #e3d6bd;          /* tlmená béžová (švík) */
+  --accent: #b81d24;        /* folklórna červená (hlavný akcent) */
+  --accent-soft: #f7e3df;   /* svetlý červený nádych (aktívne karty) */
+
+  /* Folklórne nite */
+  --folk-red: #b81d24;
+  --folk-blue: #2b4b7e;
+  --folk-gold: #d49a1f;
+  --folk-green: #2f6d39;
+
+  /* Farby tónov akordu = vyšívacie nite */
+  --root: #b81d24;          /* základný tón – červená */
+  --third: #2f6d39;         /* tercia – zelená */
+  --fifth: #2b4b7e;         /* kvinta – modrá */
+  --seventh: #d49a1f;       /* septima – zlatá */
+
+  --shadow: 0 2px 10px rgba(60, 30, 20, 0.10);
+
+  /* Čičmiansky vyšívaný lem (biela mriežka, bezošvová dlaždica 40×24) */
+  --folk-band: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='40'%20height='24'%3E%3Cg%20fill='none'%20stroke='white'%20stroke-width='1.6'%3E%3Cpath%20d='M0%205%20L10%2012%20L20%205%20L30%2012%20L40%205'/%3E%3Cpath%20d='M0%2019%20L10%2012%20L20%2019%20L30%2012%20L40%2019'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%; /* iOS: nezväčšuj text pri otočení */
+  text-size-adjust: 100%;
+}
+
+/* Viditeľný focus pre klávesnicu (prístupnosť) — folklórne modrý prstenec */
+:focus-visible {
+  outline: 3px solid var(--folk-blue);
+  outline-offset: 2px;
+}
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+.fn-card:focus-visible,
+.tone-card:focus-visible,
+.menu-card:focus-visible,
+.voice.clickable:focus-visible,
+.prog-cell.clickable:focus-visible {
+  outline: 3px solid var(--folk-blue);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.app-header {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--folk-red), #8f1119);
+  color: #fff;
+  padding: 30px 24px 30px;
+  text-align: center;
+}
+/* Jemná výšivková mriežka cez celú hlavičku */
+.app-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--folk-band);
+  background-size: 40px 24px;
+  opacity: 0.16;
+  pointer-events: none;
+}
+/* Vyšívaný lem na spodnom okraji (ako na kroji) */
+.app-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 16px;
+  background-image: var(--folk-band);
+  background-size: 40px 16px;
+  background-repeat: repeat-x;
+  background-position: center bottom;
+  opacity: 0.9;
+  pointer-events: none;
+}
+/* Text a odkazy nad vzorom */
+.app-header > * { position: relative; z-index: 1; }
+.app-header h1 {
+  margin: 0 0 6px;
+  font-size: 1.7rem;
+  letter-spacing: 0.3px;
+  text-wrap: balance;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.app-header .tagline { margin: 0; opacity: 0.94; font-size: 0.98rem; text-wrap: balance; }
+
+main {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 22px 18px 60px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.controls label { font-weight: 600; }
+.controls select {
+  font-size: 1.05rem;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  min-width: 130px;
+  min-height: 44px; /* pohodlný dotykový cieľ */
+}
+.controls .hint { color: var(--muted); font-size: 0.9rem; }
+
+/* Karty funkcií */
+.functions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 26px;
+}
+.fn-card {
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-top: 5px solid var(--folk-red); /* vyšívaný pás navrchu */
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.05s, box-shadow 0.15s;
+  box-shadow: var(--shadow);
+  touch-action: manipulation; /* zruší 300ms oneskorenie a dvojklik-zoom na dotyku */
+}
+.fn-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.fn-card.active { border-color: var(--accent); background: var(--accent-soft); }
+.fn-card .abbr {
+  display: inline-block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  width: 30px; height: 30px; line-height: 30px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+.fn-card .fn-name { color: var(--muted); font-size: 0.9rem; }
+.fn-card .chord-name { font-size: 1.5rem; font-weight: 700; margin-top: 2px; }
+
+/* Ďalšie akordy — menšie karty pod T/S/D */
+.scale { margin-bottom: 26px; }
+.scale-title {
+  font-size: 1rem;
+  margin: 0 0 4px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.scale-title::before {
+  content: "";
+  width: 9px; height: 9px;
+  background: var(--folk-gold);
+  transform: rotate(45deg); /* folklórny kosoštvorec */
+  flex: none;
+}
+.scale-hint { color: var(--muted); font-size: 0.9rem; margin: 0 0 12px; }
+.scale-tones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.tone-card {
+  flex: 1 1 120px;
+  max-width: 180px;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-top: 4px solid var(--folk-blue); /* vyšívaný pás navrchu */
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 44px; /* pohodlný dotykový cieľ */
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s, transform 0.05s, background 0.15s;
+  touch-action: manipulation;
+}
+.tone-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.tone-card.active { border-color: var(--accent); background: var(--accent-soft); }
+.tone-card .deg { font-size: 0.74rem; color: var(--muted); }
+.tone-card .tone-name { font-size: 1.1rem; font-weight: 700; line-height: 1.25; margin-top: 2px; }
+
+/* Detail */
+.detail {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--folk-red);
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+.detail h2 { margin: 0 0 4px; font-size: 1.5rem; text-wrap: balance; }
+.detail .sub { color: var(--muted); margin: 0 0 18px; }
+
+.block { margin-bottom: 22px; }
+.block h3 {
+  font-size: 1rem;
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--folk-red);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.block h3::before {
+  content: "";
+  width: 9px; height: 9px;
+  background: var(--folk-gold);
+  transform: rotate(45deg); /* folklórny kosoštvorec */
+  flex: none;
+}
+
+/* Zloženie akordu */
+.notes { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.notes li {
+  display: flex; align-items: center; gap: 8px;
+  background: #faf4e8; border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 12px;
+}
+.dot { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+.note-name { font-weight: 700; font-size: 1.05rem; }
+.note-role { color: var(--muted); font-size: 0.85rem; }
+.opt { color: var(--muted); font-style: italic; font-size: 0.82rem; }
+
+/* Hlasy: bas vs kontra */
+.voices { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.voice {
+  border: 1px solid var(--line); border-radius: 10px; padding: 14px;
+  background: #faf4e8;
+}
+.voice h4 { margin: 0 0 6px; font-size: 0.95rem; }
+.voice .tones { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; }
+.voice .desc { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+
+/* Hmatníky */
+.boards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.boards-one { grid-template-columns: minmax(0, 520px); }
+.board { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: #fcf8ef; }
+.board h4 { margin: 0 0 8px; font-size: 0.95rem; text-align: center; }
+
+.fb { display: block; }
+.fb-string { stroke: #b9b2a4; stroke-width: 2; }
+.fb-grid { stroke: #ece6da; stroke-width: 1; }
+.fb-nut { stroke: #6b6b76; stroke-width: 4; }
+.fb-strlabel { font: 600 13px "Segoe UI", sans-serif; fill: #6b6b76; text-anchor: middle; }
+.fb-note { font: 700 12px "Segoe UI", sans-serif; text-anchor: middle; }
+.fb-finger { font: 700 11px "Segoe UI", sans-serif; fill: #fff; text-anchor: middle; }
+
+/* Poznámka o septime */
+.seventh-note { margin: 8px 0 0; font-size: 0.86rem; font-weight: 600; color: var(--seventh); }
+
+/* Legenda */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
+.legend span { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+
+/* Tréner */
+.trainer {
+  margin-top: 30px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--folk-blue);
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+.trainer h2 { margin: 0 0 8px; font-size: 1.4rem; color: var(--accent); text-wrap: balance; }
+.tr-intro { color: var(--muted); margin: 0 0 14px; font-size: 0.92rem; }
+.tr-intro code {
+  background: var(--accent-soft); color: var(--accent);
+  padding: 1px 5px; border-radius: 4px; font-size: 0.9em;
+}
+#progInput, #bassInput {
+  width: 100%;
+  font-size: 1.15rem;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fcf8ef;
+  color: var(--ink);
+  font-family: inherit;
+}
+#progInput:focus, #bassInput:focus { border-color: var(--accent); }
+
+.prog-errors { margin-top: 10px; }
+.prog-error { color: var(--root); font-size: 0.9rem; font-weight: 600; }
+
+.prog-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 18px;
+}
+.prog-cell {
+  flex: 1 1 200px;
+  max-width: 260px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  background: #fcf8ef;
+}
+.prog-chord { font-size: 1.5rem; font-weight: 700; text-align: center; }
+.prog-sub { color: var(--muted); font-size: 0.85rem; text-align: center; margin-bottom: 6px; }
+.prog-pos {
+  text-align: center;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.prog-ds { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+.prog-ds-item {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 0.82rem; color: var(--ink);
+}
+.prog-ds-item.held { font-weight: 600; color: #147a7a; }
+
+/* Zvuk: tlačidlá a tempo */
+.prog-controls {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px;
+}
+.play-btn {
+  font: inherit; font-weight: 600; cursor: pointer;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 8px; padding: 10px 18px;
+  min-height: 44px; /* pohodlný dotykový cieľ */
+  touch-action: manipulation;
+  transition: background 0.15s, transform 0.05s;
+}
+.play-btn:hover { background: #8f1119; }
+.play-btn:active { transform: translateY(1px); }
+.play-btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+.play-btn.ghost:hover { background: var(--accent-soft); }
+.detail .play-btn { margin: 0 0 18px; }
+
+.tempo { color: var(--muted); font-size: 0.9rem; }
+/* Posuvník tempa — väčší úchop pre prst na dotykových obrazovkách */
+.prog-controls input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  height: 8px; border-radius: 4px;
+  background: var(--line); accent-color: var(--accent);
+  max-width: 160px; flex: 1 1 120px; margin: 6px 0;
+}
+.prog-controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); border: 2px solid #fff;
+  box-shadow: var(--shadow); cursor: pointer;
+}
+.prog-controls input[type="range"]::-moz-range-thumb {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); border: 2px solid #fff; cursor: pointer;
+}
+.prog-controls input[type="range"]::-moz-range-track {
+  height: 8px; border-radius: 4px; background: var(--line);
+}
+.tempo-val { color: var(--accent); font-weight: 700; min-width: 3ch; font-variant-numeric: tabular-nums; }
+
+.clickable { cursor: pointer; }
+.voice.clickable:hover, .prog-cell.clickable:hover { border-color: var(--accent); }
+
+/* Hlavné menu (výber roly) */
+.menu { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.menu-card {
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--panel); border: 2px solid var(--line);
+  border-top: 6px solid var(--folk-red); /* vyšívaný pás navrchu */
+  border-radius: 14px; padding: 26px 22px;
+  text-decoration: none; color: var(--ink);
+  box-shadow: var(--shadow); cursor: pointer;
+  transition: border-color 0.15s, transform 0.05s, box-shadow 0.15s;
+  touch-action: manipulation;
+}
+.menu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(60, 30, 20, 0.16); }
+/* Basista = červená niť, Kontráš = modrá niť */
+.menu-card:first-child { border-top-color: var(--folk-red); }
+.menu-card:last-child { border-top-color: var(--folk-blue); }
+.menu-title { font-size: 1.5rem; font-weight: 700; color: var(--folk-red); text-wrap: balance; }
+.menu-card:last-child .menu-title { color: var(--folk-blue); }
+.menu-desc { color: var(--muted); font-size: 0.95rem; }
+
+/* Späť na menu */
+.back-link {
+  position: absolute; left: 16px; top: 16px;
+  color: #fff; text-decoration: none; font-size: 0.92rem;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 6px 12px; border-radius: 8px;
+  transition: background 0.15s;
+}
+.back-link:hover { background: rgba(255, 255, 255, 0.3); }
+
+@media (max-width: 620px) {
+  .functions { grid-template-columns: 1fr; }
+  .menu { grid-template-columns: 1fr; }
+  .voices, .boards { grid-template-columns: 1fr; }
+  .prog-cell { max-width: none; flex-basis: 100%; }
+
+  /* Menšia hlavička, aby na telefóne nezaberala pol obrazovky */
+  .app-header { padding: 22px 16px 22px; }
+  .app-header h1 { font-size: 1.35rem; }
+  .app-header .tagline { font-size: 0.9rem; }
+
+  main { padding: 18px 14px 48px; }
+  .detail, .trainer { padding: 16px; }
+
+  /* Výber tóniny nech zaberie celý riadok a dobre sa naň ťukne */
+  .controls { gap: 8px; }
+  .controls select { flex: 1 1 auto; min-height: 44px; }
+  .controls .hint { flex-basis: 100%; }
+
+  /* Prehrať/Stop nech vyplnia riadok, tempo posuvník pod nimi */
+  .prog-controls { gap: 10px; }
+  .prog-controls .play-btn { flex: 1 1 auto; }
+}
+
+/* Rešpektuj prefers-reduced-motion — vypni animácie pre citlivých používateľov */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
