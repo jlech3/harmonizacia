@@ -2,27 +2,58 @@
   color-scheme: light;
 
   /* Folklórna paleta — ľanové plátno + vyšívacie nite */
-  --bg: #f5efe1;            /* nebielené ľanové plátno */
-  --panel: #fffdf8;         /* teplá biela */
-  --ink: #2a2723;
-  --muted: #6e6456;
-  --line: #e3d6bd;          /* tlmená béžová (švík) */
-  --accent: #b81d24;        /* folklórna červená (hlavný akcent) */
-  --accent-soft: #f7e3df;   /* svetlý červený nádych (aktívne karty) */
+  --bg: #fbfbfa;            /* ľanová off-white */
+  --surface: #ffffff;       /* karty */
+  --surface-2: #f7f4ee;     /* vnorené plochy (zloženie, hlasy, hmatníky, vstupy) */
+  --ink: #2b2b2b;           /* deep charcoal */
+  --muted: #6b6052;
+  --line: #e6dcc8;          /* jemný švík */
+  --line-strong: #d8c9ad;
+  --accent: #b91c1c;        /* madder red */
+  --accent-press: #a31818;
+  --accent-soft: #f7e3df;
 
   /* Folklórne nite */
-  --folk-red: #b81d24;
-  --folk-blue: #2b4b7e;
+  --folk-red: #b91c1c;
+  --folk-blue: #1e3a8a;     /* indigo */
   --folk-gold: #d49a1f;
   --folk-green: #2f6d39;
 
-  /* Farby tónov akordu = vyšívacie nite */
-  --root: #b81d24;          /* základný tón – červená */
-  --third: #2f6d39;         /* tercia – zelená */
-  --fifth: #2b4b7e;         /* kvinta – modrá */
-  --seventh: #d49a1f;       /* septima – zlatá */
+  /* „Modern Folklore" — identita hlavnej stránky (landing) */
+  --linen: #fbfbfa;
+  --madder: #b91c1c;
+  --indigo: #1e3a8a;
+  --charcoal: #2b2b2b;
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --stitch-red: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='8'%3E%3Cg%20fill='none'%20stroke='%23B91C1C'%20stroke-width='1.6'%3E%3Cpath%20d='M0%202%20L4%206%20L8%202%20L12%206%20L16%202'/%3E%3Cpath%20d='M0%206%20L4%202%20L8%206%20L12%202%20L16%206'/%3E%3C/g%3E%3C/svg%3E");
+  --stitch-blue: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='8'%3E%3Cg%20fill='none'%20stroke='%231E3A8A'%20stroke-width='1.6'%3E%3Cpath%20d='M0%202%20L4%206%20L8%202%20L12%206%20L16%202'/%3E%3Cpath%20d='M0%206%20L4%202%20L8%206%20L12%202%20L16%206'/%3E%3C/g%3E%3C/svg%3E");
+  --stitch-gold: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='8'%3E%3Cg%20fill='none'%20stroke='%23D49A1F'%20stroke-width='1.6'%3E%3Cpath%20d='M0%202%20L4%206%20L8%202%20L12%206%20L16%202'/%3E%3Cpath%20d='M0%206%20L4%202%20L8%206%20L12%202%20L16%206'/%3E%3C/g%3E%3C/svg%3E");
 
-  --shadow: 0 2px 10px rgba(60, 30, 20, 0.10);
+  /* Farby tónov akordu = vyšívacie nite */
+  --root: #b81d24;
+  --third: #2f6d39;
+  --fifth: #2b4b7e;
+  --seventh: #d49a1f;
+
+  /* Elevácia — dve jemné úrovne */
+  --shadow-sm: 0 1px 2px rgba(60, 30, 20, 0.06), 0 1px 3px rgba(60, 30, 20, 0.05);
+  --shadow-md: 0 6px 20px rgba(60, 30, 20, 0.10);
+  --shadow: var(--shadow-sm); /* spätná kompatibilita */
+
+  /* Rádiusy */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+
+  /* Rozostupy — 8px rytmus */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
 
   /* Čičmiansky vyšívaný lem (biela mriežka, bezošvová dlaždica 40×24) */
   --folk-band: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='40'%20height='24'%3E%3Cg%20fill='none'%20stroke='white'%20stroke-width='1.6'%3E%3Cpath%20d='M0%205%20L10%2012%20L20%205%20L30%2012%20L40%205'/%3E%3Cpath%20d='M0%2019%20L10%2012%20L20%2019%20L30%2012%20L40%2019'/%3E%3C/g%3E%3C/svg%3E");
@@ -32,10 +63,12 @@
 
 body {
   margin: 0;
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   background: var(--bg);
   color: var(--ink);
-  line-height: 1.5;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%; /* iOS: nezväčšuj text pri otočení */
   text-size-adjust: 100%;
 }
@@ -51,185 +84,156 @@ select:focus-visible,
 input:focus-visible,
 .fn-card:focus-visible,
 .tone-card:focus-visible,
-.menu-card:focus-visible,
+.tile:focus-visible,
 .voice.clickable:focus-visible,
 .prog-cell.clickable:focus-visible {
   outline: 3px solid var(--folk-blue);
   outline-offset: 2px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
+/* ---- Hlavička podstránok — svetlá „Linen & Embroidery" ---- */
 .app-header {
   position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--folk-red), #8f1119);
-  color: #fff;
-  padding: 30px 24px 30px;
+  background: transparent;
+  color: var(--ink);
   text-align: center;
+  padding: clamp(40px, 7vw, 60px) 24px clamp(18px, 3vw, 26px);
+  border-bottom: 1px solid var(--line);
 }
-/* Jemná výšivková mriežka cez celú hlavičku */
+/* Tenký vyšívaný pás navrchu — farba podľa roly (basa = červená, kontra = indigo) */
 .app-header::before {
   content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--folk-band);
-  background-size: 40px 24px;
-  opacity: 0.16;
-  pointer-events: none;
-}
-/* Vyšívaný lem na spodnom okraji (ako na kroji) */
-.app-header::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 16px;
-  background-image: var(--folk-band);
-  background-size: 40px 16px;
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 8px;
+  background-image: var(--stitch-red);
   background-repeat: repeat-x;
-  background-position: center bottom;
-  opacity: 0.9;
+  background-position: center;
   pointer-events: none;
 }
-/* Text a odkazy nad vzorom */
-.app-header > * { position: relative; z-index: 1; }
+[data-role="kontras"] .app-header::before,
+[data-role="akordy"] .app-header::before { background-image: var(--stitch-blue); }
 .app-header h1 {
-  margin: 0 0 6px;
-  font-size: 1.7rem;
-  letter-spacing: 0.3px;
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
   text-wrap: balance;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
-.app-header .tagline { margin: 0; opacity: 0.94; font-size: 0.98rem; text-wrap: balance; }
+[data-role="basista"] .app-header h1 { color: var(--madder); }
+[data-role="kontras"] .app-header h1,
+[data-role="akordy"] .app-header h1 { color: var(--indigo); }
+.app-header .tagline { margin: 0; color: var(--muted); font-size: 1rem; text-wrap: balance; }
 
 main {
-  max-width: 920px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 22px 18px 60px;
+  padding: clamp(20px, 4vw, 32px) clamp(16px, 4vw, 28px) 64px;
 }
 
+/* ---- Výber tóniny ---- */
 .controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   flex-wrap: wrap;
-  margin-bottom: 22px;
+  margin-bottom: var(--space-5);
 }
 .controls label { font-weight: 600; }
 .controls select {
   font-size: 1.05rem;
-  padding: 8px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
+  padding: 10px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   color: var(--ink);
-  min-width: 130px;
+  min-width: 140px;
   min-height: 44px; /* pohodlný dotykový cieľ */
 }
 .controls .hint { color: var(--muted); font-size: 0.9rem; }
 
-/* Karty funkcií */
+/* ---- Karty funkcií T/S/D ---- */
 .functions {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 26px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 .fn-card {
-  background: var(--panel);
-  border: 2px solid var(--line);
-  border-top: 5px solid var(--folk-red); /* vyšívaný pás navrchu */
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-5) var(--space-4);
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.15s, transform 0.05s, box-shadow 0.15s;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s, transform 0.08s, box-shadow 0.15s;
   touch-action: manipulation; /* zruší 300ms oneskorenie a dvojklik-zoom na dotyku */
 }
-.fn-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-.fn-card.active { border-color: var(--accent); background: var(--accent-soft); }
+.fn-card:hover { border-color: var(--line-strong); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.fn-card.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent), var(--shadow-sm);
+}
 .fn-card .abbr {
   display: inline-block;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #fff;
   background: var(--accent);
-  width: 30px; height: 30px; line-height: 30px;
+  width: 34px; height: 34px; line-height: 34px;
   border-radius: 50%;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
 }
 .fn-card .fn-name { color: var(--muted); font-size: 0.9rem; }
-.fn-card .chord-name { font-size: 1.5rem; font-weight: 700; margin-top: 2px; }
+.fn-card .chord-name { font-size: 1.6rem; font-weight: 700; margin-top: 2px; letter-spacing: -0.01em; }
 
-/* Ďalšie akordy — menšie karty pod T/S/D */
-.scale { margin-bottom: 26px; }
+/* ---- Ďalšie akordy ---- */
+.scale { margin-bottom: var(--space-6); }
 .scale-title {
-  font-size: 1rem;
-  margin: 0 0 4px;
-  color: var(--accent);
+  font-size: 1.05rem;
+  margin: 0 0 var(--space-1);
+  color: var(--folk-red);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
-.scale-title::before {
-  content: "";
-  width: 9px; height: 9px;
-  background: var(--folk-gold);
-  transform: rotate(45deg); /* folklórny kosoštvorec */
-  flex: none;
-}
-.scale-hint { color: var(--muted); font-size: 0.9rem; margin: 0 0 12px; }
+.scale-hint { color: var(--muted); font-size: 0.9rem; margin: 0 0 var(--space-3); }
 .scale-tones {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: var(--space-3);
 }
 .tone-card {
   flex: 1 1 120px;
   max-width: 180px;
-  background: var(--panel);
-  border: 2px solid var(--line);
-  border-top: 4px solid var(--folk-blue); /* vyšívaný pás navrchu */
-  border-radius: 10px;
-  padding: 10px 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-2);
   text-align: center;
   cursor: pointer;
   min-height: 44px; /* pohodlný dotykový cieľ */
-  box-shadow: var(--shadow);
-  transition: border-color 0.15s, transform 0.05s, background 0.15s;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s, transform 0.08s, box-shadow 0.15s;
   touch-action: manipulation;
 }
-.tone-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-.tone-card.active { border-color: var(--accent); background: var(--accent-soft); }
+.tone-card:hover { border-color: var(--line-strong); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.tone-card.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent), var(--shadow-sm);
+}
 .tone-card .deg { font-size: 0.74rem; color: var(--muted); }
-.tone-card .tone-name { font-size: 1.1rem; font-weight: 700; line-height: 1.25; margin-top: 2px; }
+.tone-card .tone-name { font-size: 1.15rem; font-weight: 700; line-height: 1.25; margin-top: 2px; }
 
-/* Detail */
-.detail {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-top: 4px solid var(--folk-red);
-  border-radius: 12px;
-  padding: 22px;
-  box-shadow: var(--shadow);
-}
-.detail h2 { margin: 0 0 4px; font-size: 1.5rem; text-wrap: balance; }
-.detail .sub { color: var(--muted); margin: 0 0 18px; }
-
-.block { margin-bottom: 22px; }
-.block h3 {
-  font-size: 1rem;
-  margin: 0 0 10px;
-  padding-bottom: 6px;
-  border-bottom: 2px solid var(--folk-red);
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.block h3::before {
+/* ---- Spoločné kosoštvorcové značky nadpisov ---- */
+.scale-title::before,
+.block h3::before,
+.picker-label::before {
   content: "";
   width: 9px; height: 9px;
   background: var(--folk-gold);
@@ -237,61 +241,88 @@ main {
   flex: none;
 }
 
-/* Zloženie akordu */
-.notes { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+/* ---- Detail akordu ---- */
+.detail {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--folk-red);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 3vw, 28px);
+  box-shadow: var(--shadow-sm);
+}
+.detail h2 { margin: 0 0 var(--space-1); font-family: var(--font-serif); font-size: 1.7rem; letter-spacing: -0.01em; text-wrap: balance; }
+.detail .sub { color: var(--muted); margin: 0 0 var(--space-5); }
+
+.block { margin-bottom: var(--space-5); }
+.block:last-child { margin-bottom: 0; }
+.block h3 {
+  font-size: 1.05rem;
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line);
+  color: var(--folk-red);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---- Zloženie akordu ---- */
+.notes { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .notes li {
-  display: flex; align-items: center; gap: 8px;
-  background: #faf4e8; border: 1px solid var(--line);
-  border-radius: 8px; padding: 8px 12px;
+  display: flex; align-items: center; gap: var(--space-2);
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: var(--space-2) var(--space-3);
 }
 .dot { width: 14px; height: 14px; border-radius: 50%; flex: none; }
 .note-name { font-weight: 700; font-size: 1.05rem; }
 .note-role { color: var(--muted); font-size: 0.85rem; }
 .opt { color: var(--muted); font-style: italic; font-size: 0.82rem; }
 
-/* Hlasy: bas vs kontra */
-.voices { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* ---- Hlasy: bas vs kontra ---- */
+.voices { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
 .voice {
-  border: 1px solid var(--line); border-radius: 10px; padding: 14px;
-  background: #faf4e8;
+  border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-4);
+  background: var(--surface-2);
 }
-.voice h4 { margin: 0 0 6px; font-size: 0.95rem; }
+.voice h4 { margin: 0 0 var(--space-1); font-size: 0.95rem; }
 .voice .tones { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; }
-.voice .desc { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+.voice .desc { color: var(--muted); font-size: 0.85rem; margin-top: var(--space-1); }
 
-/* Hmatníky */
-.boards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+/* ---- Hmatníky ---- */
+.boards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
 .boards-one { grid-template-columns: minmax(0, 520px); }
-.board { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: #fcf8ef; }
-.board h4 { margin: 0 0 8px; font-size: 0.95rem; text-align: center; }
+.board { border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-3); background: var(--surface-2); }
+.board h4 { margin: 0 0 var(--space-2); font-size: 0.95rem; text-align: center; }
 
 .fb { display: block; }
 .fb-string { stroke: #b9b2a4; stroke-width: 2; }
 .fb-grid { stroke: #ece6da; stroke-width: 1; }
+/* Základný durový hmat na husliach/viole — zvýraznené polohy prstov (2,4,5,7 poltónov) */
+.fb-grid-major { stroke: #b5793c; stroke-width: 4; stroke-opacity: 0.4; }
 .fb-nut { stroke: #6b6b76; stroke-width: 4; }
 .fb-strlabel { font: 600 13px "Segoe UI", sans-serif; fill: #6b6b76; text-anchor: middle; }
 .fb-note { font: 700 12px "Segoe UI", sans-serif; text-anchor: middle; }
 .fb-finger { font: 700 11px "Segoe UI", sans-serif; fill: #fff; text-anchor: middle; }
 
 /* Poznámka o septime */
-.seventh-note { margin: 8px 0 0; font-size: 0.86rem; font-weight: 600; color: var(--seventh); }
+.seventh-note { margin: var(--space-2) 0 0; font-size: 0.86rem; font-weight: 600; color: var(--seventh); }
 
 /* Legenda */
-.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-1); }
 .legend span { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--muted); }
 
-/* Tréner */
+/* ---- Tréner ---- */
 .trainer {
-  margin-top: 30px;
-  background: var(--panel);
+  margin-top: var(--space-6);
+  background: var(--surface);
   border: 1px solid var(--line);
-  border-top: 4px solid var(--folk-blue);
-  border-radius: 12px;
-  padding: 22px;
-  box-shadow: var(--shadow);
+  border-top: 3px solid var(--folk-blue);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 3vw, 28px);
+  box-shadow: var(--shadow-sm);
 }
-.trainer h2 { margin: 0 0 8px; font-size: 1.4rem; color: var(--accent); text-wrap: balance; }
-.tr-intro { color: var(--muted); margin: 0 0 14px; font-size: 0.92rem; }
+.trainer h2 { margin: 0 0 var(--space-2); font-family: var(--font-serif); font-size: 1.5rem; color: var(--folk-blue); letter-spacing: -0.01em; text-wrap: balance; }
+.tr-intro { color: var(--muted); margin: 0 0 var(--space-4); font-size: 0.92rem; }
 .tr-intro code {
   background: var(--accent-soft); color: var(--accent);
   padding: 1px 5px; border-radius: 4px; font-size: 0.9em;
@@ -299,143 +330,289 @@ main {
 #progInput, #bassInput {
   width: 100%;
   font-size: 1.15rem;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fcf8ef;
+  padding: 12px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
   color: var(--ink);
   font-family: inherit;
 }
 #progInput:focus, #bassInput:focus { border-color: var(--accent); }
 
-.prog-errors { margin-top: 10px; }
+.prog-errors { margin-top: var(--space-3); }
 .prog-error { color: var(--root); font-size: 0.9rem; font-weight: 600; }
 
 .prog-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 18px;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
 }
 .prog-cell {
   flex: 1 1 200px;
   max-width: 260px;
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 12px;
-  background: #fcf8ef;
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  background: var(--surface-2);
 }
-.prog-chord { font-size: 1.5rem; font-weight: 700; text-align: center; }
+.prog-chord { font-size: 1.5rem; font-weight: 700; text-align: center; letter-spacing: -0.01em; }
 .prog-sub { color: var(--muted); font-size: 0.85rem; text-align: center; margin-bottom: 6px; }
 .prog-pos {
   text-align: center;
   color: var(--accent);
   font-size: 0.8rem;
   font-weight: 600;
-  margin-top: 4px;
+  margin-top: var(--space-1);
 }
-.prog-ds { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+.prog-ds { margin-top: var(--space-2); display: flex; flex-direction: column; gap: 5px; }
 .prog-ds-item {
   display: flex; align-items: center; gap: 7px;
   font-size: 0.82rem; color: var(--ink);
 }
 .prog-ds-item.held { font-weight: 600; color: #147a7a; }
 
-/* Zvuk: tlačidlá a tempo */
+/* ---- Zvuk: tlačidlá a tempo ---- */
 .prog-controls {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px;
+  display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-3);
 }
 .play-btn {
   font: inherit; font-weight: 600; cursor: pointer;
   background: var(--accent); color: #fff; border: none;
-  border-radius: 8px; padding: 10px 18px;
+  border-radius: var(--radius-sm); padding: 11px 20px;
   min-height: 44px; /* pohodlný dotykový cieľ */
+  box-shadow: var(--shadow-sm);
   touch-action: manipulation;
-  transition: background 0.15s, transform 0.05s;
+  transition: background 0.15s, transform 0.08s, box-shadow 0.15s;
 }
-.play-btn:hover { background: #8f1119; }
+.play-btn:hover { background: var(--accent-press); box-shadow: var(--shadow-md); }
 .play-btn:active { transform: translateY(1px); }
-.play-btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
-.play-btn.ghost:hover { background: var(--accent-soft); }
-.detail .play-btn { margin: 0 0 18px; }
+.play-btn.ghost { background: var(--surface); color: var(--accent); border: 1px solid var(--line-strong); box-shadow: none; }
+.play-btn.ghost:hover { background: var(--accent-soft); border-color: var(--accent); }
+.detail .play-btn { margin: 0 0 var(--space-4); }
 
 .tempo { color: var(--muted); font-size: 0.9rem; }
 /* Posuvník tempa — väčší úchop pre prst na dotykových obrazovkách */
 .prog-controls input[type="range"] {
   -webkit-appearance: none; appearance: none;
   height: 8px; border-radius: 4px;
-  background: var(--line); accent-color: var(--accent);
+  background: var(--line-strong); accent-color: var(--accent);
   max-width: 160px; flex: 1 1 120px; margin: 6px 0;
 }
 .prog-controls input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none; appearance: none;
   width: 24px; height: 24px; border-radius: 50%;
   background: var(--accent); border: 2px solid #fff;
-  box-shadow: var(--shadow); cursor: pointer;
+  box-shadow: var(--shadow-sm); cursor: pointer;
 }
 .prog-controls input[type="range"]::-moz-range-thumb {
   width: 24px; height: 24px; border-radius: 50%;
   background: var(--accent); border: 2px solid #fff; cursor: pointer;
 }
 .prog-controls input[type="range"]::-moz-range-track {
-  height: 8px; border-radius: 4px; background: var(--line);
+  height: 8px; border-radius: 4px; background: var(--line-strong);
 }
 .tempo-val { color: var(--accent); font-weight: 700; min-width: 3ch; font-variant-numeric: tabular-nums; }
 
 .clickable { cursor: pointer; }
 .voice.clickable:hover, .prog-cell.clickable:hover { border-color: var(--accent); }
 
-/* Hlavné menu (výber roly) */
-.menu { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.menu-card {
-  display: flex; flex-direction: column; gap: 8px;
-  background: var(--panel); border: 2px solid var(--line);
-  border-top: 6px solid var(--folk-red); /* vyšívaný pás navrchu */
-  border-radius: 14px; padding: 26px 22px;
-  text-decoration: none; color: var(--ink);
-  box-shadow: var(--shadow); cursor: pointer;
-  transition: border-color 0.15s, transform 0.05s, box-shadow 0.15s;
-  touch-action: manipulation;
+/* ===== Hlavná stránka — „Modern Folklore" (Linen & Embroidery) ===== */
+.menu-page {
+  font-family: var(--font-sans);
+  background: var(--linen);
+  color: var(--charcoal);
 }
-.menu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(60, 30, 20, 0.16); }
-/* Basista = červená niť, Kontráš = modrá niť */
-.menu-card:first-child { border-top-color: var(--folk-red); }
-.menu-card:last-child { border-top-color: var(--folk-blue); }
-.menu-title { font-size: 1.5rem; font-weight: 700; color: var(--folk-red); text-wrap: balance; }
-.menu-card:last-child .menu-title { color: var(--folk-blue); }
-.menu-desc { color: var(--muted); font-size: 0.95rem; }
+.landing {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 48px) clamp(16px, 4vw, 28px) 64px;
+}
 
-/* Späť na menu */
+/* Hero — vzdušná typografická hlavička namiesto ťažkého banneru */
+.hero { text-align: center; padding: clamp(32px, 7vw, 72px) 0 clamp(24px, 4vw, 40px); }
+.hero-eyebrow {
+  margin: 0 0 var(--space-3);
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--madder);
+}
+.hero-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 6vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--charcoal);
+  text-wrap: balance;
+}
+.hero-sub {
+  margin: var(--space-4) auto 0;
+  max-width: 44ch;
+  font-size: clamp(1rem, 2.2vw, 1.15rem);
+  color: var(--muted);
+  text-wrap: balance;
+}
+.hero-ornament {
+  height: 8px;
+  width: min(220px, 56%);
+  margin: var(--space-5) auto 0;
+  background-image: var(--stitch-gold);
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+/* Dlaždice rolí — veľké interaktívne karty */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(16px, 3vw, 24px);
+}
+.tile {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: #ffffff;
+  border: 1px solid #ece7dc;
+  border-radius: 16px;
+  padding: clamp(24px, 4vw, 36px) clamp(20px, 3vw, 30px) clamp(20px, 3vw, 28px);
+  text-decoration: none;
+  color: var(--charcoal);
+  box-shadow: 0 1px 2px rgba(30, 25, 20, 0.05), 0 8px 24px rgba(30, 25, 20, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+/* Vyšívaný folklórny pás navrchu (červený = basa, modrý = kontra) */
+.tile::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 8px;
+  background-image: var(--stitch-red);
+  background-repeat: repeat-x;
+  background-position: center;
+}
+.tile-kontra::before { background-image: var(--stitch-blue); }
+.tile:hover { transform: translateY(-6px); box-shadow: 0 2px 4px rgba(30, 25, 20, 0.06), 0 18px 40px rgba(30, 25, 20, 0.12); }
+.tile:focus-visible { border-radius: 16px; outline-offset: 3px; }
+
+.tile-kicker {
+  font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted);
+}
+.tile-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  line-height: 1.1;
+}
+.tile-bass .tile-title { color: var(--madder); }
+.tile-kontra .tile-title { color: var(--indigo); }
+.tile-desc { margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.6; }
+.tile-cta {
+  margin-top: auto;
+  align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px; min-height: 44px;
+  border-radius: 999px;
+  font-weight: 600; font-size: 0.98rem;
+  color: #fff;
+  transition: background 0.15s ease, transform 0.08s ease;
+}
+.tile-cta::after { content: "→"; font-size: 1.05em; line-height: 1; }
+.tile-bass .tile-cta { background: var(--madder); }
+.tile-kontra .tile-cta { background: var(--indigo); }
+.tile-bass:hover .tile-cta { background: #a31818; }
+.tile-kontra:hover .tile-cta { background: #18306e; }
+.tile:hover .tile-cta { transform: translateX(3px); }
+
+/* ---- Späť na menu ---- */
 .back-link {
-  position: absolute; left: 16px; top: 16px;
-  color: #fff; text-decoration: none; font-size: 0.92rem;
-  background: rgba(255, 255, 255, 0.16);
-  padding: 6px 12px; border-radius: 8px;
-  transition: background 0.15s;
+  position: absolute; left: clamp(12px, 3vw, 20px); top: 16px;
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--ink); text-decoration: none; font-size: 0.9rem; font-weight: 600;
+  background: var(--surface); border: 1px solid var(--line-strong);
+  padding: 8px 14px; border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s, border-color 0.15s, transform 0.08s;
 }
-.back-link:hover { background: rgba(255, 255, 255, 0.3); }
+.back-link:hover { background: var(--accent-soft); border-color: var(--accent); transform: translateY(-1px); }
 
+/* ---- Odkaz na podstránku (napr. Hmaty akordov) ---- */
+.subpage-link { margin: 0 0 var(--space-5); }
+.subpage-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 11px 18px;
+  font-weight: 600;
+  min-height: 44px;
+  box-shadow: var(--shadow-sm);
+  touch-action: manipulation;
+  transition: background 0.15s, border-color 0.15s, transform 0.08s, box-shadow 0.15s;
+}
+.subpage-link a:hover { background: var(--accent-soft); border-color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+/* ---- Výber akordu (podstránka Hmaty akordov) ---- */
+.picker-group { margin-bottom: var(--space-5); }
+.picker-label {
+  font-size: 1.05rem;
+  margin: 0 0 var(--space-3);
+  color: var(--folk-red);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.picker-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.picker-btn {
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  min-height: 48px; /* pohodlný dotykový cieľ */
+  padding: 6px 10px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  touch-action: manipulation;
+  transition: border-color 0.15s, transform 0.08s, box-shadow 0.15s, background 0.15s;
+}
+.picker-btn:hover { border-color: var(--line-strong); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.picker-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: var(--shadow-sm); }
+.picker-main { font-size: 1.1rem; font-weight: 700; line-height: 1.1; }
+.picker-alt { font-size: 0.72rem; opacity: 0.72; margin-top: 1px; }
+.picker-btn.active .picker-alt { opacity: 0.9; }
+
+/* ---- Responzívne ---- */
 @media (max-width: 620px) {
   .functions { grid-template-columns: 1fr; }
-  .menu { grid-template-columns: 1fr; }
+  .tiles { grid-template-columns: 1fr; }
   .voices, .boards { grid-template-columns: 1fr; }
   .prog-cell { max-width: none; flex-basis: 100%; }
 
-  /* Menšia hlavička, aby na telefóne nezaberala pol obrazovky */
-  .app-header { padding: 22px 16px 22px; }
-  .app-header h1 { font-size: 1.35rem; }
-  .app-header .tagline { font-size: 0.9rem; }
-
-  main { padding: 18px 14px 48px; }
-  .detail, .trainer { padding: 16px; }
+  main { padding: var(--space-5) var(--space-4) var(--space-7); }
+  .detail, .trainer { padding: var(--space-4); }
 
   /* Výber tóniny nech zaberie celý riadok a dobre sa naň ťukne */
-  .controls { gap: 8px; }
+  .controls { gap: var(--space-2); }
   .controls select { flex: 1 1 auto; min-height: 44px; }
   .controls .hint { flex-basis: 100%; }
 
   /* Prehrať/Stop nech vyplnia riadok, tempo posuvník pod nimi */
-  .prog-controls { gap: 10px; }
+  .prog-controls { gap: var(--space-2); }
   .prog-controls .play-btn { flex: 1 1 auto; }
 }
 

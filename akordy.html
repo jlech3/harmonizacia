@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fbfbfa">
+  <title>Hmaty akordov — Harmonizácia ľudových piesní</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-role="akordy">
+  <header class="app-header">
+    <a class="back-link" href="kontras.html">← Kontráš</a>
+    <h1>Hmaty akordov</h1>
+    <p class="tagline">Vyber si akord a pozri si, ako ho chytíš na husliach a viole.</p>
+  </header>
+
+  <main>
+    <section class="picker" id="chordPicker" aria-label="Výber akordu"></section>
+    <section class="detail" id="detail" hidden></section>
+  </main>
+
+  <script src="js/theory.js"></script>
+  <script src="js/instruments.js"></script>
+  <script src="js/fingerboard.js"></script>
+  <script src="js/lib/Tone.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

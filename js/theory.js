@@ -263,12 +263,57 @@
     return { chords: chords, errors: errors };
   }
 
+  // ---- Ľubovoľný akord podľa pitch-class (pre podstránku „Hmaty akordov") ----
+  // Pre vyhľadanie hmatu nie je dôležitý presný enharmonický zápis, ale čitateľnosť,
+  // preto používame jednoduché chromatické názvy bez dvojitých posuviek.
+  const CHROMATIC = ['C', 'Cis', 'D', 'Es', 'E', 'F', 'Fis', 'G', 'As', 'A', 'B', 'H'];
+
+  function pcName(pc) {
+    return CHROMATIC[((pc % 12) + 12) % 12];
+  }
+
+  // Intervaly (poltóny) tercie a kvinty podľa druhu akordu.
+  const CHORD_INTERVALS = {
+    dur:  { third: 4, fifth: 7 },
+    mol:  { third: 3, fifth: 7 },
+    dur7: { third: 4, fifth: 7 },
+    dim:  { third: 3, fifth: 6 },
+    aug:  { third: 4, fifth: 8 }
+  };
+
+  // Zostaví akord z ľubovoľného základného tónu (pitch class) a druhu.
+  // Tvar objektu je kompatibilný s vykreslením detailu (notes s rolami, bass, kontra).
+  function chordFromPc(rootPc, quality) {
+    const iv = CHORD_INTERVALS[quality] || CHORD_INTERVALS.dur;
+    const pcs = [rootPc, rootPc + iv.third, rootPc + iv.fifth];
+    if (quality === 'dur7') pcs.push(rootPc + 10); // malá septima
+    const notes = pcs.map(function (pc, i) {
+      return { name: pcName(pc), pc: ((pc % 12) + 12) % 12, role: ROLES[i] };
+    });
+    const rootName = pcName(rootPc);
+    const NAME = {
+      dur: rootName + ' dur', mol: rootName + ' mol', dur7: rootName + '7',
+      dim: rootName + ' zmenšený', aug: rootName + ' zväčšený'
+    };
+    return {
+      name: NAME[quality] || (rootName + ' ' + quality),
+      quality: quality,
+      notes: notes,
+      triad: notes.slice(0, 3),
+      bass: [notes[0], notes[2]],
+      kontra: notes.slice(0, 3),
+      hasSeventh: quality === 'dur7'
+    };
+  }
+
   global.Theory = {
     KEYS: KEYS,
     getKey: getKey,
     functionsFor: functionsFor,
     extraChords: extraChords,
     parseChord: parseChord,
-    parseProgression: parseProgression
+    parseProgression: parseProgression,
+    pcName: pcName,
+    chordFromPc: chordFromPc
   };
 })(window);

@@ -40,9 +40,15 @@
     const sx = function (s) { return padL + s * colW; };
     const top = padT - 8, bot = padT + (n - 1) * rowH + 8;
 
-    // Poltónové vodiace čiary.
+    // Poltónové vodiace čiary. Pri husliach a viole zvýrazníme stĺpce základného
+    // durového hmatu: 1.–4. prst = 2, 4, 5, 7 poltónov od prázdnej struny
+    // (2. a 3. prst sú pri sebe — poltón medzi nimi).
+    const majorFrame = (instrumentId === 'husle' || instrumentId === 'viola');
+    const MAJOR_FRAME_SEMIS = [2, 4, 5, 7];
     for (let s = 1; s <= maxS; s++) {
-      svg.appendChild(el('line', { x1: sx(s), y1: top, x2: sx(s), y2: bot, class: 'fb-grid' }));
+      const cls = (majorFrame && MAJOR_FRAME_SEMIS.indexOf(s) !== -1)
+        ? 'fb-grid fb-grid-major' : 'fb-grid';
+      svg.appendChild(el('line', { x1: sx(s), y1: top, x2: sx(s), y2: bot, class: cls }));
     }
 
     // Struny + popisky prázdnych strún.

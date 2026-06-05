@@ -393,5 +393,111 @@
     update();
   }
 
-  init();
+  // ---- Podstránka „Hmaty akordov" (ľubovoľný akord, mimo tóniny) ----
+
+  // 12 základných tónov; pri krížikoch/béčkach ukážeme aj enharmonický názov.
+  const PICK_ROOTS = [
+    { pc: 0 }, { pc: 1, alt: 'Des' }, { pc: 2 }, { pc: 3, alt: 'Dis' },
+    { pc: 4 }, { pc: 5 }, { pc: 6, alt: 'Ges' }, { pc: 7 },
+    { pc: 8, alt: 'Gis' }, { pc: 9 }, { pc: 10, alt: 'Ais' }, { pc: 11 }
+  ];
+  const PICK_QUALITIES = [
+    { id: 'dur', label: 'dur' },
+    { id: 'mol', label: 'mol' },
+    { id: 'dur7', label: 'septakord', sub: 'dur 7' }
+  ];
+  const QUALITY_SUB = {
+    dur: 'durový akord', mol: 'molový akord', dur7: 'dominantný septakord'
+  };
+
+  const pickState = { rootPc: 0, quality: 'dur' };
+
+  function initChordLookup() {
+    renderPicker();
+    renderPickDetail();
+  }
+
+  // Jedna prepínacia skupina tlačidiel (základný tón / druh akordu).
+  function pickerGroup(labelText, items, isActive, onPick) {
+    const group = elc('div', 'picker-group');
+    group.setAttribute('role', 'group');
+    group.setAttribute('aria-label', labelText);
+    group.appendChild(elc('h2', 'picker-label', labelText));
+    const row = elc('div', 'picker-row');
+    items.forEach(function (it) {
+      const btn = elc('button', 'picker-btn' + (isActive(it) ? ' active' : ''));
+      btn.type = 'button';
+      btn.setAttribute('aria-pressed', isActive(it) ? 'true' : 'false');
+      btn.setAttribute('aria-label', it.ariaLabel);
+      btn.appendChild(elc('span', 'picker-main', it.main));
+      if (it.alt) btn.appendChild(elc('span', 'picker-alt', it.alt));
+      btn.addEventListener('click', function () { onPick(it); });
+      row.appendChild(btn);
+    });
+    group.appendChild(row);
+    return group;
+  }
+
+  function renderPicker() {
+    const pick = document.getElementById('chordPicker');
+    pick.innerHTML = '';
+
+    const roots = PICK_ROOTS.map(function (r) {
+      const name = Theory.pcName(r.pc);
+      return {
+        pc: r.pc, main: name, alt: r.alt,
+        ariaLabel: 'Základný tón ' + name + (r.alt ? ' alebo ' + r.alt : '')
+      };
+    });
+    pick.appendChild(pickerGroup('Základný tón', roots,
+      function (it) { return pickState.rootPc === it.pc; },
+      function (it) { pickState.rootPc = it.pc; renderPicker(); renderPickDetail(); }));
+
+    const quals = PICK_QUALITIES.map(function (q) {
+      return {
+        id: q.id, main: q.label, alt: q.sub,
+        ariaLabel: q.label + (q.sub ? ' (' + q.sub + ')' : '')
+      };
+    });
+    pick.appendChild(pickerGroup('Druh akordu', quals,
+      function (it) { return pickState.quality === it.id; },
+      function (it) { pickState.quality = it.id; renderPicker(); renderPickDetail(); }));
+  }
+
+  function renderPickDetail() {
+    const chord = Theory.chordFromPc(pickState.rootPc, pickState.quality);
+
+    detailEl.hidden = false;
+    detailEl.innerHTML = '';
+    detailEl.appendChild(elc('h2', null, chord.name));
+    detailEl.appendChild(elc('p', 'sub', QUALITY_SUB[pickState.quality] || ''));
+    const play = elc('button', 'play-btn', '▶ Prehrať akord');
+    play.type = 'button';
+    play.addEventListener('click', function () {
+      Sound.playChord(chord.notes.map(function (n) { return n.pc; }), { octave: 3, voice: 'kontra', duration: 1.4 });
+    });
+    detailEl.appendChild(play);
+
+    detailEl.appendChild(composition(chord));
+
+    const boards = elc('div', 'block');
+    boards.appendChild(elc('h3', null, 'Hmaty na husliach a viole'));
+    boards.appendChild(legend(chord.notes));
+    if (chord.hasSeventh) {
+      boards.appendChild(elc('p', 'seventh-note', 'Septima je zvýraznená dvojitým krúžkom — v septakorde ju do harmónie prináša kontra.'));
+    }
+    const bgrid = elc('div', 'boards');
+    ['husle', 'viola'].forEach(function (instId) {
+      const wrap = elc('div', 'board');
+      wrap.appendChild(elc('h4', null, Instruments.INSTRUMENTS[instId].name));
+      const placements = Instruments.placementsForChord(instId, chord.notes);
+      wrap.appendChild(Fingerboard.render(instId, placements));
+      bgrid.appendChild(wrap);
+    });
+    boards.appendChild(bgrid);
+    detailEl.appendChild(boards);
+  }
+
+  if (role === 'akordy') initChordLookup();
+  else init();
 })();

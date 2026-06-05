@@ -3,25 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#b81d24">
+  <meta name="theme-color" content="#fbfbfa">
   <title>Harmonizácia ľudových piesní</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="menu-page">
-  <header class="app-header">
-    <h1>Harmonizácia ľudových piesní</h1>
-    <p class="tagline">Vyber si, čo chceš cvičiť.</p>
-  </header>
+  <main class="landing">
+    <header class="hero">
+      <p class="hero-eyebrow">Ľudová harmónia</p>
+      <h1 class="hero-title">Harmonizácia ľudových piesní</h1>
+      <p class="hero-sub">Nauč sa robiť sprievod k ľudovkám — basa a kontra na husliach, viole a kontrabase.</p>
+      <div class="hero-ornament" aria-hidden="true"></div>
+    </header>
 
-  <main>
-    <nav class="menu" aria-label="Výber roly">
-      <a class="menu-card" href="basista.html">
-        <span class="menu-title">Basista</span>
-        <span class="menu-desc">Výber tóniny, akordy T/S/D aj ďalšie. Pri každom akorde uvidíš basový tón na kontrabase vo všetkých polohách a dole tréner prstokladu.</span>
+    <nav class="tiles" aria-label="Vyber si rolu">
+      <a class="tile tile-bass" href="basista.html">
+        <span class="tile-kicker">Rola</span>
+        <h2 class="tile-title">Basista</h2>
+        <p class="tile-desc">Basový tón na kontrabase vo všetkých polohách, akordy T/S/D aj ďalšie a tréner prstokladu.</p>
+        <span class="tile-cta">Trénovať basu</span>
       </a>
-      <a class="menu-card" href="kontras.html">
-        <span class="menu-title">Kontráš</span>
-        <span class="menu-desc">Výber tóniny, akordy T/S/D aj ďalšie. Pri každom akorde uvidíš hmaty na viole a husliach a dole tréner kontra linky.</span>
+      <a class="tile tile-kontra" href="kontras.html">
+        <span class="tile-kicker">Rola</span>
+        <h2 class="tile-title">Kontráš</h2>
+        <p class="tile-desc">Hmaty akordov na viole a husliach, výber ľubovoľného akordu a tréner kontra linky.</p>
+        <span class="tile-cta">Trénovať kontry</span>
       </a>
     </nav>
   </main>
