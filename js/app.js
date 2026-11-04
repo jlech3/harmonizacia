@@ -238,8 +238,9 @@
 
   // ---- Tréner kontra linky ----
 
+  const QUALITY_TEXT = { dur: 'dur', mol: 'mol', dim: 'zmenšený' };
   function chordFullName(chord) {
-    const base = chord.root.name + ' ' + chord.quality;
+    const base = chord.root.name + ' ' + (QUALITY_TEXT[chord.quality] || chord.quality);
     return chord.has7 ? base + ' 7' : base;
   }
 
@@ -247,20 +248,14 @@
     return nt.finger === 0 ? 'prázdna struna' : nt.finger + '. prst';
   }
 
-  function trainerCell(step) {
-    const chord = step.chord;
-    const cell = elc('div', 'prog-cell');
-    cell.appendChild(elc('div', 'prog-chord', chord.token));
-    cell.appendChild(elc('div', 'prog-sub', chordFullName(chord)));
-    cell.appendChild(Fingerboard.render('viola', step.dvojhmat));
-    cell.classList.add('clickable');
-    cell.title = 'Klikni a vypočuj dvojhmat';
-    cell.addEventListener('click', function () {
-      Sound.playChord(step.dvojhmat.map(function (n) { return n.pc; }), { octave: 3, voice: 'kontra', duration: 1.1 });
-    });
+  function playDvojhmat(notes) {
+    Sound.playChord(notes.map(function (n) { return n.pc; }), { octave: 3, voice: 'kontra', duration: 1.1 });
+  }
 
+  // Zoznam tónov dvojhmatu (rola, prst, prípadne držaný tón).
+  function dsList(notes) {
     const ds = elc('div', 'prog-ds');
-    step.dvojhmat.forEach(function (nt) {
+    notes.forEach(function (nt) {
       const item = elc('div', 'prog-ds-item' + (nt.held ? ' held' : ''));
       const dot = elc('span', 'dot');
       dot.style.background = colorFor(nt.role);
@@ -270,7 +265,63 @@
       item.appendChild(document.createTextNode(label));
       ds.appendChild(item);
     });
-    cell.appendChild(ds);
+    return ds;
+  }
+
+  // Tlačidlo na prehranie dvojhmatu (zastaví bublanie, aby nespustilo iné akcie).
+  function playButton(notes, label, extraClass) {
+    const b = elc('button', 'play-btn small' + (extraClass ? ' ' + extraClass : ''), label);
+    b.type = 'button';
+    b.addEventListener('click', function (e) { e.stopPropagation(); playDvojhmat(notes); });
+    return b;
+  }
+
+  // Do kontajnera vykreslí JEDEN hmatník so všetkými tónmi akordu v 1. polohe
+  // (všetky guličky — rovnako ako na podstránke „Hmaty akordov"). Hráč si z nich
+  // sám poskladá dvojhmat: ľubovoľné dve susedné struny.
+  function buildAlts(container, chord, instId) {
+    container.appendChild(elc('p', 'prog-alts-hint',
+      'Všetky tóny akordu v 1. polohe. Dvojhmat = ľubovoľné dve susedné struny.'));
+    container.appendChild(legend(chord.notes));
+    if (chord.has7) {
+      container.appendChild(elc('p', 'seventh-note',
+        'Septima je zvýraznená dvojitým krúžkom — v septakorde ju do harmónie prináša kontra.'));
+    }
+    const placements = Instruments.placementsForChord(instId, chord.notes);
+    container.appendChild(Fingerboard.render(instId, placements));
+    const actions = elc('div', 'prog-actions');
+    actions.appendChild(playButton(chord.notes, '▶ Prehrať akord'));
+    container.appendChild(actions);
+  }
+
+  function trainerCell(step, instId) {
+    const chord = step.chord;
+    const cell = elc('div', 'prog-cell');
+    cell.appendChild(elc('div', 'prog-chord', chord.token));
+    cell.appendChild(elc('div', 'prog-sub', chordFullName(chord)));
+    cell.appendChild(Fingerboard.render(instId, step.dvojhmat));
+    cell.appendChild(dsList(step.dvojhmat));
+
+    // Akcie: prehrať dvojhmat + rozbaliť ďalšie hmaty.
+    const actions = elc('div', 'prog-actions');
+    actions.appendChild(playButton(step.dvojhmat, '▶ Prehrať'));
+
+    const moreBtn = elc('button', 'play-btn ghost small', 'Viac hmatov ▾');
+    moreBtn.type = 'button';
+    moreBtn.setAttribute('aria-expanded', 'false');
+    const alts = elc('div', 'prog-alts');
+    alts.hidden = true;
+    let built = false;
+    moreBtn.addEventListener('click', function () {
+      if (!built) { buildAlts(alts, chord, instId); built = true; }
+      alts.hidden = !alts.hidden;
+      moreBtn.textContent = alts.hidden ? 'Viac hmatov ▾' : 'Menej hmatov ▴';
+      moreBtn.setAttribute('aria-expanded', alts.hidden ? 'false' : 'true');
+    });
+    actions.appendChild(moreBtn);
+
+    cell.appendChild(actions);
+    cell.appendChild(alts);
     return cell;
   }
 
@@ -303,9 +354,11 @@
     const resEl = document.getElementById('progResult');
     if (!input) return;
 
+    const instSel = document.getElementById('kontraInstrument');
     setupPlayback(input, 'progPlay', 'progStop', 'progTempo', 'progTempoVal', 'band');
 
     function update() {
+      const instId = instSel ? instSel.value : 'viola';
       const parsed = Theory.parseProgression(input.value);
       errEl.innerHTML = '';
       resEl.innerHTML = '';
@@ -316,13 +369,14 @@
 
       if (!parsed.chords.length) return;
 
-      const line = Kontra.computeLine(parsed.chords);
+      const line = Kontra.computeLine(parsed.chords, instId);
       const row = elc('div', 'prog-row');
-      line.forEach(function (step) { row.appendChild(trainerCell(step)); });
+      line.forEach(function (step) { row.appendChild(trainerCell(step, instId)); });
       resEl.appendChild(row);
     }
 
     input.addEventListener('input', update);
+    if (instSel) instSel.addEventListener('change', update);
     update();
   }
 
@@ -404,10 +458,11 @@
   const PICK_QUALITIES = [
     { id: 'dur', label: 'dur' },
     { id: 'mol', label: 'mol' },
-    { id: 'dur7', label: 'septakord', sub: 'dur 7' }
+    { id: 'dur7', label: 'septakord', sub: 'dur 7' },
+    { id: 'dim', label: 'zmenšený' }
   ];
   const QUALITY_SUB = {
-    dur: 'durový akord', mol: 'molový akord', dur7: 'dominantný septakord'
+    dur: 'durový akord', mol: 'molový akord', dur7: 'dominantný septakord', dim: 'zmenšený akord'
   };
 
   const pickState = { rootPc: 0, quality: 'dur' };

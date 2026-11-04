@@ -9,6 +9,7 @@
     'Základný tón': '#b81d24', // červená niť
     'Tercia': '#2f6d39',       // zelená niť
     'Kvinta': '#2b4b7e',       // modrá niť
+    'Zmenšená kvinta': '#2b4b7e',
     'Septima': '#d49a1f',      // zlatá niť
     'Stupeň': '#b81d24'
   };

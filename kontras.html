@@ -37,11 +37,20 @@
     <section class="trainer" aria-label="Tréner kontra linky">
       <h2>Tréner kontra linky</h2>
       <p class="tr-intro">
-        Zadaj postupnosť akordov a tréner vyberie dvojhmaty pre kontru (violu).
+        Zadaj postupnosť akordov a tréner vyberie dvojhmaty pre kontru.
         <strong>Veľké písmeno = dur</strong>, malé = mol; <code>is</code>/<code>es</code> = krížik/béčko
-        (Cis, Es…), samostatné <code>B</code> = Bes, koncové <code>7</code> = septakord.
+        (Cis, Es…), samostatné <code>B</code> = Bes, koncové <code>7</code> = septakord,
+        koncové <code>0</code> = zmenšený (napr. <code>g0</code> = G zmenšený).
         Tercia je povinná (určuje dur/mol), pri septakorde kontra hrá terciu + septimu.
       </p>
+      <div class="trainer-opts">
+        <label for="kontraInstrument">Nástroj</label>
+        <select id="kontraInstrument">
+          <option value="viola" selected>Viola (kontra)</option>
+          <option value="husle">Husle</option>
+        </select>
+        <span class="hint">Vyber, na ktorom nástroji chceš trénovať kontra linku.</span>
+      </div>
       <input id="progInput" type="text" autocomplete="off" spellcheck="false"
              placeholder="napr.  C F G7 C   alebo   a d E7 a" value="C F G7 C">
       <div class="prog-controls">

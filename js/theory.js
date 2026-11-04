@@ -196,9 +196,13 @@
     const upper = first.toUpperCase();
     const isUpper = first === upper && upper !== first.toLowerCase();
     let rest = tok.slice(1).toLowerCase();
-    let has7 = false;
-    if (rest.charAt(rest.length - 1) === '7') {
+    let has7 = false, dim = false;
+    const suffix = rest.charAt(rest.length - 1);
+    if (suffix === '7') {
       has7 = true;
+      rest = rest.slice(0, -1);
+    } else if (suffix === '0') {
+      dim = true; // 0 = zmenšený (°)
       rest = rest.slice(0, -1);
     }
 
@@ -219,7 +223,7 @@
     }
 
     const rootPc = ((LETTER_PC[letter] + delta) % 12 + 12) % 12;
-    return { letter: letter, delta: delta, rootPc: rootPc, quality: isUpper ? 'dur' : 'mol', has7: has7 };
+    return { letter: letter, delta: delta, rootPc: rootPc, quality: dim ? 'dim' : (isUpper ? 'dur' : 'mol'), has7: has7 };
   }
 
   // Z tokenu zostaví akord (notes s rolami) alebo vráti null.
@@ -229,11 +233,12 @@
     const r = parseRoot(tok);
     if (!r) return null;
 
-    const thirdSemis = r.quality === 'dur' ? 4 : 3;
+    const thirdSemis = r.quality === 'dur' ? 4 : 3;   // dur = veľká, mol/dim = malá tercia
+    const fifthSemis = r.quality === 'dim' ? 6 : 7;   // dim = zmenšená, inak čistá kvinta
     const tones = [
-      noteFrom(r.letter, r.rootPc, 0, 0),       // základný tón
+      noteFrom(r.letter, r.rootPc, 0, 0),          // základný tón
       noteFrom(r.letter, r.rootPc, 2, thirdSemis), // tercia
-      noteFrom(r.letter, r.rootPc, 4, 7)         // kvinta
+      noteFrom(r.letter, r.rootPc, 4, fifthSemis)  // kvinta
     ];
     if (r.has7) tones.push(noteFrom(r.letter, r.rootPc, 6, 10)); // malá septima
 

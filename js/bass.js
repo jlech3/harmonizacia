@@ -24,6 +24,11 @@
 
   // Tón, ktorý bas pre daný akord hrá: bežne základný tón, pri 7 terciu.
   function bassNote(chord) {
+    // Zmenšený akord: bas hrá zmenšenú kvintu (citlivý tón, vedie o pol tóna nahor).
+    // Pomenujeme ju jednoducho (Cis, As…), tak ako to basista číta — nie ako Des.
+    if (chord.quality === 'dim') {
+      return { name: global.Theory.pcName(chord.fifth.pc), pc: chord.fifth.pc, role: 'Zmenšená kvinta' };
+    }
     const src = chord.has7 ? chord.third : chord.root;
     return {
       name: src.name,

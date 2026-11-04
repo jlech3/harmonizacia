@@ -4,12 +4,14 @@
 (function (global) {
   'use strict';
 
-  const VIOLA = 'viola';
+  const DEFAULT_INST = 'viola';
 
-  // Kontra na viole (C–G–D–A) hrá prioritne na spodných dvoch strunách: C a G.
+  // Kontra hrá prioritne na spodných DVOCH strunách (index 0,1 = C–G pri viole,
+  // G–D pri husliach); na vyššie struny ide, len keď sa akord dole hrať nedá.
   const STRING_PAIRS = [[0, 1]];
-  // Záloha pre nedosiahnuteľný akord; pre dur/mol/septakordy sa nikdy nepoužije.
-  const FALLBACK_PAIRS = [[1, 2], [2, 3], [0, 2], [1, 3], [0, 3]];
+  // Záloha – IBA susedné struny. Dvojhmat sa dá sláčikom hrať len na dvoch
+  // susedných strunách; nesusedný pár by preskočil strunu medzi nimi.
+  const FALLBACK_PAIRS = [[1, 2], [2, 3]];
 
   // Dvojice rolí pre dvojhmat. Tercia je vždy prítomná.
   const PAIRS_TRIAD = [['Tercia', 'Kvinta'], ['Základný tón', 'Tercia']];
@@ -34,8 +36,18 @@
     };
   }
 
+  // Nehrateľný dvojhmat: oba tóny fretované rovnakým prstom, ale v rôznych
+  // polohách — jeden prst nevie byť na dvoch pražcoch naraz (rovnaký prst v
+  // rovnakej polohe = barré, to je v poriadku; prázdna struna je vždy v poriadku).
+  function playable(pLo, pHi) {
+    if (pLo.isOpen || pHi.isOpen) return true;
+    if (pLo.finger === pHi.finger && pLo.semis !== pHi.semis) return false;
+    return true;
+  }
+
   // Vygeneruje dvojhmaty pre dané dvojice rolí na zadaných pároch strún.
-  function buildCandidates(chord, rolePairs, stringPairs) {
+  // allowUnplayable=true vynechá kontrolu hrateľnosti (posledná záchrana).
+  function buildCandidates(chord, rolePairs, stringPairs, instId, allowUnplayable) {
     const out = [];
     rolePairs.forEach(function (rp) {
       const nA = noteByRole(chord, rp[0]);
@@ -44,9 +56,10 @@
       stringPairs.forEach(function (sp) {
         // Dve priradenia: ktorý tón ide na nižšiu strunu.
         [[nA, nB], [nB, nA]].forEach(function (asg) {
-          const pLo = global.Instruments.placeOn(VIOLA, sp[0], asg[0].pc);
-          const pHi = global.Instruments.placeOn(VIOLA, sp[1], asg[1].pc);
+          const pLo = global.Instruments.placeOn(instId, sp[0], asg[0].pc);
+          const pHi = global.Instruments.placeOn(instId, sp[1], asg[1].pc);
           if (!pLo || !pHi) return;
+          if (!allowUnplayable && !playable(pLo, pHi)) return;
           out.push({ notes: [decorate(pLo, asg[0]), decorate(pHi, asg[1])] });
         });
       });
@@ -65,11 +78,15 @@
     return out;
   }
 
-  // Všetky hrateľné dvojhmaty pre akord (najprv susedné struny, inak záloha).
-  function candidates(chord) {
+  // Všetky hrateľné dvojhmaty pre akord na danom nástroji
+  // (najprv spodné dve struny, inak susedné vyššie).
+  function candidates(chord, instId) {
+    instId = instId || DEFAULT_INST;
     const rolePairs = chord.has7 ? PAIRS_SEVENTH : PAIRS_TRIAD;
-    let out = buildCandidates(chord, rolePairs, STRING_PAIRS);
-    if (!out.length) out = buildCandidates(chord, rolePairs, FALLBACK_PAIRS);
+    let out = buildCandidates(chord, rolePairs, STRING_PAIRS, instId);
+    if (!out.length) out = buildCandidates(chord, rolePairs, FALLBACK_PAIRS, instId);
+    // Posledná záchrana: ak nič hrateľné, povoľ aj nehrateľné (nech sa niečo ukáže).
+    if (!out.length) out = buildCandidates(chord, rolePairs, STRING_PAIRS.concat(FALLBACK_PAIRS), instId, true);
     return out;
   }
 
@@ -98,8 +115,9 @@
   }
 
   // Pre postupnosť akordov vyberie dvojhmaty s minimálnym pohybom ruky (DP).
-  function computeLine(chords) {
-    const cands = chords.map(candidates);
+  function computeLine(chords, instId) {
+    instId = instId || DEFAULT_INST;
+    const cands = chords.map(function (c) { return candidates(c, instId); });
     const n = cands.length;
     if (!n) return [];
 
