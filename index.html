@@ -3,36 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#fbfbfa">
-  <title>Harmonizácia ľudových piesní</title>
+  <meta name="theme-color" content="#16131C">
+  <title>Harmonizácia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Geist+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
 </head>
-<body class="menu-page">
-  <main class="landing">
+<body>
+  <div class="wrap">
+    <nav class="nav">
+      <a class="brand" href="index.html" aria-label="Harmonizácia — domov">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><path d="M9 9l12-2"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </span>
+        <span class="wordmark">Harmonizácia</span>
+      </a>
+      <button class="avatar" type="button" aria-label="Účet (čoskoro)" title="Účet — čoskoro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+      </button>
+    </nav>
+
     <header class="hero">
-      <p class="hero-eyebrow">Ľudová harmónia</p>
-      <h1 class="hero-title">Harmonizácia ľudových piesní</h1>
-      <p class="hero-sub">Nauč sa robiť sprievod k ľudovkám — basa a kontra na husliach, viole a kontrabase.</p>
-      <div class="hero-ornament" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <p class="eyebrow">Cvičebnica ľudovej harmónie</p>
+        <h1 class="display">Harmonizuj ľudové piesne.</h1>
+        <p class="lead">Zapíš akordy a hneď počuješ aj vidíš basovú a kontra linku — s reálnymi hmatmi na kontrabas, violu a husle.</p>
+        <div class="cta-row">
+          <a class="btn btn-grad" href="kniznica.html">Otvoriť knižnicu</a>
+          <a class="btn btn-ghost" href="editor.html">Nová pieseň</a>
+        </div>
+      </div>
+
+      <aside class="preview" aria-label="Živý náhľad hmatníka">
+        <div class="preview-head">
+          <span class="eyebrow">Živý náhľad</span>
+          <span class="pill mono">a mol · kontra</span>
+        </div>
+        <div id="heroBoard"></div>
+        <div class="preview-player">
+          <a class="play-circle" href="kniznica.html" aria-label="Otvoriť knižnicu">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
+          </a>
+          <span class="track"><i></i></span>
+          <span class="mono muted" style="font-size:.78rem">0:12</span>
+        </div>
+      </aside>
     </header>
 
-    <nav class="tiles" aria-label="Vyber si rolu">
-      <a class="tile tile-bass" href="basista.html">
-        <span class="tile-kicker">Rola</span>
-        <h2 class="tile-title">Basista</h2>
-        <p class="tile-desc">Basový tón na kontrabase vo všetkých polohách, akordy T/S/D aj ďalšie a tréner prstokladu.</p>
-        <span class="tile-cta">Trénovať basu</span>
+    <nav class="bento" aria-label="Rozcestník">
+      <a class="tile tile-big amber-tint" href="kniznica.html">
+        <div class="tile-head">
+          <span class="chip amber" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+          <div>
+            <h2>Knižnica piesní</h2>
+            <p class="tile-desc">Tvoje harmonizácie — vytvor, otvor a prehraj.</p>
+          </div>
+        </div>
+        <div class="song-mini" id="heroSongs"></div>
+        <span class="tile-link">Otvoriť knižnicu →</span>
       </a>
-      <a class="tile tile-kontra" href="kontras.html">
-        <span class="tile-kicker">Rola</span>
-        <h2 class="tile-title">Kontráš</h2>
-        <p class="tile-desc">Hmaty akordov na viole a husliach, výber ľubovoľného akordu a tréner kontra linky.</p>
-        <span class="tile-cta">Trénovať kontry</span>
-      </a>
+
+      <div class="bento-right">
+        <a class="tile teal-tint" href="akordy.html">
+          <span class="chip teal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span>
+          <h2>Hmaty akordov</h2>
+          <p class="tile-desc">Vyber akord a pozri si hmaty.</p>
+        </a>
+        <div class="trio">
+          <a class="tile small coral-tint" href="basista.html">
+            <span class="chip coral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8c1 0 1.5 1.5 2.5 1.5S6 6 7 6s1.5 3.5 2.5 3.5S11 8 12 8"/><path d="M12 16c1 0 1.5-1.5 2.5-1.5S16 18 17 18s1.5-3.5 2.5-3.5S21 16 22 16"/></svg></span>
+            <h2>Tréner basy</h2>
+          </a>
+          <a class="tile small peri-tint" href="kontras.html">
+            <span class="chip peri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><path d="M9 9l12-2"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+            <h2>Tréner kontry</h2>
+          </a>
+        </div>
+      </div>
     </nav>
-  </main>
+
+    <footer class="foot">
+      <span>Harmonizácia — ľudová harmónia pre basu a kontru</span>
+      <span>v1 · lokálne</span>
+    </footer>
+  </div>
+
+  <script src="js/theory.js"></script>
+  <script src="js/instruments.js"></script>
+  <script src="js/fingerboard.js"></script>
+  <script src="js/kontra.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/hub.js"></script>
 </body>
 </html>

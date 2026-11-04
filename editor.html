@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#16131C">
+  <title>Editor skladby — Harmonizácia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Geist+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="wrap">
+    <nav class="nav">
+      <a class="brand" href="index.html" aria-label="Harmonizácia — domov">
+        <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><path d="M9 9l12-2"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+        <span class="wordmark">Harmonizácia</span>
+      </a>
+      <button class="avatar" type="button" aria-label="Účet (čoskoro)" title="Účet — čoskoro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg></button>
+    </nav>
+
+    <div class="sub-head">
+      <div>
+        <a class="crumb" href="kniznica.html">← Knižnica</a>
+        <h1 class="sub-title" id="edHeading">Editor skladby</h1>
+      </div>
+      <div class="head-actions">
+        <a class="btn btn-ghost" href="kniznica.html">Zahodiť</a>
+        <button class="btn btn-grad" id="save" type="button">Uložiť</button>
+      </div>
+    </div>
+
+    <div class="ed-grid">
+      <div class="card" style="display:flex;flex-direction:column;gap:16px">
+        <h2 class="panel-title">Nastavenia</h2>
+        <label class="field"><span>Názov piesne</span><input id="edTitle" class="control" placeholder="napr. A keď sa ja"></label>
+        <label class="field"><span>Tónina</span><select id="edKey" class="control"></select></label>
+        <label class="field"><span>Takt (metrum)</span>
+          <select id="edTime" class="control"><option>2/4</option><option>3/4</option><option>4/4</option><option>6/8</option></select></label>
+        <label class="field"><span>Tempo (BPM)</span><input id="edTempo" class="control" type="number" min="40" max="240" step="1" value="104"></label>
+        <label class="field"><span>Žáner / štýl</span><input id="edStyle" class="control" placeholder="napr. Horehronský duvaj"></label>
+        <label class="field"><span>Región</span><input id="edRegion" class="control" placeholder="napr. Horehronie"></label>
+        <label class="field"><span>Obtiažnosť</span>
+          <select id="edDiff" class="control"><option value="zaciatocnik">Začiatočník</option><option value="mierne">Mierne pokročilý</option><option value="pokrocily">Pokročilý</option></select></label>
+        <label class="field"><span>Video (odkaz)</span><input id="edVideo" class="control" placeholder="YouTube alebo MP3…"></label>
+      </div>
+
+      <div class="ed-right">
+        <div class="card" style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <h2 class="panel-title">Harmónia</h2>
+            <p class="hint" id="palHint">Klikni do políčka v piesni a vyber akord — vpíše sa tam a kurzor skočí na ďalšie políčko. T / S / D sú zvýraznené. Akord môžeš napísať aj ručne (napr. Fis7, g0).</p>
+          </div>
+          <div class="palette" id="palette"></div>
+        </div>
+
+        <div class="card" style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <h2 class="panel-title">Pieseň</h2>
+            <span class="mono" id="timeLabel" style="font-size:.72rem;letter-spacing:.06em;color:var(--t3)"></span>
+          </div>
+          <div class="bars" id="bars"></div>
+          <div class="pb-row">
+            <button class="btn btn-grad" id="play" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg><span id="playLabel">Prehrať</span></button>
+            <button class="btn btn-soft" id="stop" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>Stop</button>
+            <button class="loop-toggle" id="loop" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Opakovať úsek</button>
+          </div>
+          <p class="hint">Políčka = doby v takte. Píš, prepisuj aj mazanie kdekoľvek — prázdne políčko pokračuje predchádzajúcim akordom. <strong>＋</strong> pridá takt, <strong>×</strong> pri čísle ho zmaže. <strong>Klik na číslo taktu</strong> = odkiaľ hrať, <strong>Shift + klik</strong> (mobil: podrž) = koniec úseku.</p>
+        </div>
+
+        <div class="card" style="display:flex;flex-direction:column;gap:14px">
+          <h2 class="panel-title">Náhľad sprievodu — basa a kontra</h2>
+          <div class="prev-cols" id="preview"></div>
+          <p class="hint">Prehraj a over, či harmónia sedí. V zobrazení piesne vidíš aj hmaty na hmatníku.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <span>Editor skladby</span>
+      <span>v1 · lokálne</span>
+    </footer>
+  </div>
+
+  <script src="js/theory.js"></script>
+  <script src="js/instruments.js"></script>
+  <script src="js/kontra.js"></script>
+  <script src="js/bass.js"></script>
+  <script src="js/lib/Tone.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#16131C">
+  <title>Pieseň — Harmonizácia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Geist+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="wrap">
+    <nav class="nav">
+      <a class="brand" href="index.html" aria-label="Harmonizácia — domov">
+        <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><path d="M9 9l12-2"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+        <span class="wordmark">Harmonizácia</span>
+      </a>
+      <button class="avatar" type="button" aria-label="Účet (čoskoro)" title="Účet — čoskoro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg></button>
+    </nav>
+
+    <main id="song" hidden>
+      <div class="sub-head">
+        <div>
+          <a class="crumb" href="kniznica.html">← Knižnica</a>
+          <h1 class="sub-title" id="title"></h1>
+        </div>
+        <div class="head-actions">
+          <a class="btn btn-soft" id="edit" href="editor.html">Upraviť</a>
+          <button class="icon-btn" id="share" type="button" aria-label="Skopírovať odkaz" title="Skopírovať odkaz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v13"/><path d="m8 7 4-4 4 4"/></svg></button>
+          <button class="icon-btn" id="download" type="button" aria-label="Stiahnuť pieseň (.json)" title="Stiahnuť pieseň (.json)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="m8 11 4 4 4-4"/><path d="M5 21h14"/></svg></button>
+        </div>
+      </div>
+      <div class="song-meta" id="meta"></div>
+
+      <div class="controls">
+        <div class="left">
+          <button class="btn btn-grad" id="play" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>Prehrať</button>
+          <button class="btn btn-soft" id="stop" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>Stop</button>
+        </div>
+        <div class="right">
+          <div class="seg grad" id="role" role="group" aria-label="Rola">
+            <button type="button" data-v="basista" aria-pressed="false">Basista</button>
+            <button type="button" data-v="kontras" aria-pressed="true">Kontráš</button>
+            <button type="button" data-v="oboje" aria-pressed="false">Oboje</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-row">
+        <span class="sec-label" id="secLabel"></span>
+        <div class="inst-wrap" id="instWrap">
+          <span class="lbl">Nástroj</span>
+          <div class="seg" id="inst" role="group" aria-label="Nástroj kontry">
+            <button type="button" data-v="viola" aria-pressed="true">Viola</button>
+            <button type="button" data-v="husle" aria-pressed="false">Husle</button>
+          </div>
+        </div>
+      </div>
+      <section class="m-grid" id="grid" aria-label="Akordy piesne"></section>
+      <p class="hint" style="margin-top:16px">Oranžové pražce = základný durový hmat (1.–4. prst na 2‑4‑5‑7 poltóne). Čísla pri bodkách = prsty.</p>
+    </main>
+
+    <p class="notfound" id="notfound" hidden>Pieseň sa nenašla. <a href="kniznica.html">Späť do knižnice</a></p>
+
+    <footer class="foot">
+      <span>Harmonizácia — prehraj a over, či harmónia sedí</span>
+      <span>v1 · lokálne</span>
+    </footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/theory.js"></script>
+  <script src="js/instruments.js"></script>
+  <script src="js/fingerboard.js"></script>
+  <script src="js/kontra.js"></script>
+  <script src="js/bass.js"></script>
+  <script src="js/lib/Tone.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/piesen.js"></script>
+</body>
+</html>
