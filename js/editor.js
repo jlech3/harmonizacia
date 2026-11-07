@@ -142,6 +142,8 @@
       if (state.playing) play();
     });
     $('edTempo').addEventListener('input', function () { state.song.tempo = +$('edTempo').value || 104; showArticNow(); });
+    // nové tempo počuť hneď (až po potvrdení hodnoty, nie pri každej číslici)
+    $('edTempo').addEventListener('change', function () { if (state.playing) play(); });
     const map = { edTitle: 'title', edStyle: 'style', edRegion: 'region', edVideo: 'videoUrl' };
     Object.keys(map).forEach(function (id) {
       $(id).addEventListener('input', function () { state.song[map[id]] = $(id).value; });

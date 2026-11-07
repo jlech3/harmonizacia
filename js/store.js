@@ -80,7 +80,7 @@
   // príklad 1 (kontra a–e) a príklad 2 (kontrabas a–d). Rytmy samotné sú v audio.js.
   const ACCOMP = [
     { id: 'estam',  label: 'Es‑tam (esta)',                 desc: 'Rýchle tempo: basa krátko na dobu, kontra na ľahkú osminu medzi dobami.' },
-    { id: 'duvaj8', label: 'Duvaj osminový (dvojitý)',      desc: 'Starší štýl: v každej dobe dve osminy legato, druhá prízvučná — basa aj kontra spolu. V miernom tempe je prvá osmina kratšia (asymetria), s rastúcim tempom sa vyrovnáva.' },
+    { id: 'duvaj8', label: 'Duvaj osminový (dvojitý)',      desc: 'Starší štýl: v každej dobe dve osminy v jednom ťahu sláčika, oddelené krátkym pozastavením; párna (druhá) je prízvučná — basa aj kontra spolu. V miernom tempe je prvá osmina kratšia (asymetria), s rastúcim tempom sa vyrovnáva.' },
     { id: 'duvaj4', label: 'Duvaj štvrťový (čardáš)',       desc: 'Nový štýl: štvrťové noty viazané po dvoch, druhá prízvučná — basa aj kontra spolu.' },
     { id: 'stvrte', label: 'Štvrťové neviazané (krútivé)',  desc: 'Archaický: kontra aj basa štvrťová na každú dobu, každá zvlášť.' },
     { id: 'osminy', label: 'Osminy neviazané',              desc: 'Kontra štyri samostatné osminy v takte, basa štvrťová na dobu.' },

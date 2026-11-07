@@ -12,3 +12,7 @@ dist/
 
 # Lokálne nastavenia agenta
 .claude/
+
+# Zamietnuté zvukové vzorky (lokálne, aplikácia ich nepoužíva)
+samples/iowa/
+samples/ph/

@@ -41,6 +41,16 @@
     bass.volume.value = -3;
   }
 
+  // Doznievanie tónu po pustení (s). Tréneri (jeden tón / akord) nechajú tón dozniet;
+  // spodky musia mať doznievanie krátke ako zdvihnutie sláčika — inak by dlhý dozvuk
+  // prekryl dĺžky a pozastavenia zo štúdie (staccato, pauza za nepárnou osminou duvaja…).
+  const REL_TRAINER = { viola: 0.6, bass: 0.8 };
+  const REL_SLOTS = { viola: 0.1, bass: 0.15 };
+  function setRelease(r) {
+    if (viola) viola.release = r.viola;
+    if (bass) bass.release = r.bass;
+  }
+
   // Rozbehne zvuk po geste používateľa (klik). Tone.start() musí byť v geste.
   function ensureStarted() {
     makeInstruments();
@@ -80,7 +90,7 @@
 
   function playNote(pc, opts) {
     opts = opts || {};
-    ensureStarted(); stopAll();
+    ensureStarted(); stopAll(); setRelease(REL_TRAINER);
     const inst = instFor(opts.voice);
     if (!inst || !inst.loaded) return;
     const note = noteOf(pc, opts.octave == null ? 3 : opts.octave);
@@ -90,7 +100,7 @@
   function playChord(pcs, opts) {
     opts = opts || {};
     if (!pcs || !pcs.length) return;
-    ensureStarted(); stopAll();
+    ensureStarted(); stopAll(); setRelease(REL_TRAINER);
     const inst = instFor(opts.voice);
     if (!inst || !inst.loaded) return;
     const notes = voiceUpMidi(pcs, opts.octave == null ? 3 : opts.octave).map(midiToNote);
@@ -104,7 +114,7 @@
   function playProgression(chords, opts) {
     opts = opts || {};
     if (!chords || !chords.length || !Tone) return 0;
-    ensureStarted(); stopAll();
+    ensureStarted(); stopAll(); setRelease(REL_TRAINER);
 
     const bpm = opts.bpm || 104;
     Tone.Transport.bpm.value = bpm;
@@ -163,7 +173,8 @@
   const VALCIK_LEN = { staccato: 0.25, tenuto: 0.6, presah: 0.95 };  // úder každú dobu
   // Sila úderu podľa stupňa prízvukovania (kritérium 2 v štúdii): 0 = bez prízvuku,
   // takmer zaniká; 1 = bez výrazného prízvuku, len zmena ťahu; 2 = vedomý prízvuk; 3 = najväčší.
-  const LEVEL = { '0': 0.45, '1': 0.75, '2': 0.95, '3': 1.0 };
+  // Rozdiel 1 ↔ 2 musí byť jasne počuť (~ -5 dB): 1 = „len zmena ťahu", 2 = vedomý prízvuk.
+  const LEVEL = { '0': 0.3, '1': 0.55, '2': 0.95, '3': 1.0 };
   function lvl(pattern, i) { return LEVEL[pattern.charAt(i % pattern.length)] || LEVEL['2']; }
   // Mierne tempo = 0, rýchle (≥160 BPM) = 1 — pri rýchlom tempe sa dĺžky vyrovnávajú.
   function fastness(bpm) { return Math.min(1, Math.max(0, (bpm - 100) / 60)); }
@@ -177,9 +188,12 @@
     // Dĺžky podľa slovenského modelu „kdxx": v prvom poltaktí prvá osmina kratšia
     // (~37:63 v miernom tempe), druhé poltaktie súmerné; navyše prvé poltaktie mierne
     // kratšie než druhé (12:13, D. Holý). S rastúcim tempom sa všetko vyrovnáva.
-    // Prízvuky: 1212 / 2222 / 2121 (príloha C). Ťah sláčika: pri 1212 a 2222 variant
-    // A = (1'2)(3'4) — krátke zastavenie za každou osminou; pri 2121 ťah 1)(23)(4 —
-    // zastavenie za 1. a 3. osminou, 2.→3. a 4.→1. legato.
+    // Prízvuky: 1212 / 2222 / 2121 (príloha C). Ťah sláčika (príloha B, kritérium 1):
+    // pri 1212 a 2222 variant A = (1'2)(3'4) — dve osminy v jednom ťahu, oddelené
+    // pozastavením sláčika za nepárnou osminou; zmena ťahu za párnou je bez pauzy.
+    // Pri 2121 ťah 1)'(23)'(4 — pauza za 1. a 3. osminou (pri zmene ťahu), 2.→3. a 4.→1.
+    // legato. V oboch prípadoch teda: nepárna osmina skrátená pauzou, párna znie až
+    // po ďalšiu osminu.
     duvaj8: function (b, ctx) {
       // xxxx = všetky osminy rovnako dlhé (aj poltaktia) — ako pri rýchlom tempe.
       const t = ctx.lengths === 'xxxx' ? 1 : fastness(ctx.bpm);
@@ -191,16 +205,17 @@
       const d1 = cut * pol, d2 = (1 - cut) * pol;
       const acc = ctx.accent || '1212';
       const u = (b % 2) * 2;                        // poradie prvej osminy tejto doby v takte (0 / 2)
-      const len2 = acc === '2121' ? d2 + 0.02 : d2 * 0.9;
-      return both({ f: start, len: d1 - 0.05, vel: lvl(acc, u) })
-        .concat(both({ f: start + d1, len: len2, vel: lvl(acc, u + 1) }));
+      const pause = 0.06;                           // pozastavenie sláčika za nepárnou osminou
+      return both({ f: start, len: d1 - pause, vel: lvl(acc, u) })
+        .concat(both({ f: start + d1, len: d2, vel: lvl(acc, u + 1) }));
     },
-    // 1d + 2d: štvrťový duvaj — štvrťové viazané po dvoch (12)(34); prízvuk 2222 (merané
-    // hry, predvolené) alebo 1212 (notový príklad 1d).
+    // 1d + 2d: štvrťový duvaj — štvrťové viazané po dvoch (12)(34): prvá štvrť znie až po
+    // druhú (legato v ťahu), za druhou zmena ťahu s krátkym zdvihnutím sláčika.
+    // Prízvuk 2222 (merané hry, predvolené) alebo 1212 (notový príklad 1d).
     duvaj4: function (b, ctx) {
       const acc = ctx.accent || '2222';
       const endOfStroke = b % 2 === 1;
-      return both({ f: 0, len: endOfStroke ? 0.88 : 1.0, vel: lvl(acc, b) });
+      return both({ f: 0, len: endOfStroke ? 0.9 : 1.0, vel: lvl(acc, b) });
     },
     // 1a + 2b: štvrťové na každú dobu, každá zvlášť.
     stvrte: function () {
@@ -235,7 +250,7 @@
   function playSlots(slots, opts) {
     opts = opts || {};
     if (!slots || !slots.length || !Tone) return 0;
-    ensureStarted(); stopAll();
+    ensureStarted(); stopAll(); setRelease(REL_SLOTS);
 
     const perBar = BEATS[opts.meter] || 2;
     const beat = 60 / (opts.bpm || 104);
