@@ -357,6 +357,7 @@ a.crumb:hover { color: var(--t1); }
 .head-actions { display: flex; gap: 10px; align-items: center; }
 
 .field { display: flex; flex-direction: column; gap: 7px; }
+.field[hidden] { display: none; }
 .field > span { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t3); }
 .control { width: 100%; padding: 12px 13px; border-radius: 10px; background: var(--surf-2); border: 1px solid var(--line); color: var(--t1); font: inherit; font-size: 0.9rem; outline: none; }
 .control::placeholder { color: var(--t3); }
@@ -399,6 +400,8 @@ select.control option { background: var(--surf); color: var(--t1); }
 .slot:hover { border-color: var(--line-strong); }
 .slot:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(245,177,61,0.22); }
 .slot.bad { border-color: var(--coral); color: var(--coral); }
+.slot.playing { border-color: var(--amber); background: rgba(245,177,61,0.22); box-shadow: 0 0 0 3px rgba(245,177,61,0.25); }
+.m-card.playing { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(245,177,61,0.25), var(--shadow); }
 .measure.in-range .slot { border-color: rgba(245,177,61,0.45); }
 @media (hover: none) { .mdel { opacity: 1; } }
 

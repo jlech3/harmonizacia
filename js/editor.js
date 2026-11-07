@@ -19,7 +19,7 @@
     rangeEnd: null, // koniec úseku (null = až do konca piesne)
     focus: null,    // posledné políčko s kurzorom {t, s} — sem píše paleta
     loop: false,
-    loopTimer: null
+    playing: false
   };
   if (!state.song.bars || !state.song.bars.length) state.song.bars = [{ chords: [] }];
   Store.normalizeSlots(state.song);
@@ -46,18 +46,71 @@
       o.value = k.id; o.textContent = k.display;
       sel.appendChild(o);
     });
+    [['edAccomp', Store.ACCOMP], ['edArtic', Store.ARTIC], ['edLengths', Store.LENGTHS]].forEach(function (p) {
+      p[1].forEach(function (a) {
+        const o = document.createElement('option');
+        o.value = a.id; o.textContent = a.label;
+        $(p[0]).appendChild(o);
+      });
+    });
+  }
+  // Popis štýlu + zobrazenie len tých volieb, ktoré sa štýlu týkajú.
+  function showAccompDesc() {
+    const id = $('edAccomp').value;
+    const a = Store.ACCOMP.find(function (x) { return x.id === id; });
+    $('edAccompDesc').textContent = a ? a.desc : '';
+    $('articField').hidden = !(id === 'estam' || id === 'valcik');
+    fillAccents(id);
+    syncLengths(id);
+    showArticNow();
+  }
+  // Dĺžky osmín — len pri osminovom duvaji.
+  function syncLengths(styleId) {
+    const show = styleId === 'duvaj8';
+    $('lengthsField').hidden = !show;
+    if (!show) return;
+    state.song.lengths = Store.lengthsOf(Object.assign({}, state.song, { accomp: styleId }));
+    $('edLengths').value = state.song.lengths;
+  }
+  // Voľby prízvukovania pre zvolený štýl (osminový / štvrťový duvaj má každý iné).
+  function fillAccents(styleId) {
+    const list = Store.ACCENTS[styleId];
+    const sel = $('edAccent');
+    sel.innerHTML = '';
+    $('accentField').hidden = !list;
+    if (!list) return;
+    list.forEach(function (a) {
+      const o = document.createElement('option');
+      o.value = a.id; o.textContent = a.label;
+      sel.appendChild(o);
+    });
+    state.song.accent = Store.accentOf(Object.assign({}, state.song, { accomp: styleId }));
+    sel.value = state.song.accent;
+  }
+  function showArticNow() {
+    const bpm = +$('edTempo').value || 104;
+    const now = Store.resolveArtic($('edArtic').value, bpm);
+    const lab = Store.ARTIC.find(function (x) { return x.id === now; });
+    $('edArticNow').textContent = $('edArtic').value === 'auto'
+      ? 'Pri tempe ' + bpm + ' BPM: ' + (lab ? lab.label.split(' — ')[0].toLowerCase() : now) + '.'
+      : '';
   }
   function loadFields() {
     const s = state.song;
     $('edTitle').value = s.title || '';
     $('edKey').value = s.key || 'C-dur';
     $('edTime').value = s.timeSig || '2/4';
+    s.accomp = Store.accompOf(s);
+    s.artic = s.artic || 'auto';
+    $('edAccomp').value = s.accomp;
+    $('edArtic').value = s.artic;
     $('edTempo').value = s.tempo || 104;
     $('edStyle').value = s.style || '';
     $('edRegion').value = s.region || '';
     $('edDiff').value = s.difficulty || 'zaciatocnik';
     $('edVideo').value = s.videoUrl || '';
     $('edHeading').textContent = editId ? 'Upraviť skladbu' : 'Editor skladby';
+    showAccompDesc();
   }
   function bindFields() {
     $('edKey').addEventListener('change', function () { state.song.key = $('edKey').value; buildPalette(); });
@@ -66,7 +119,29 @@
       Store.normalizeSlots(state.song);
       renderBars(); renderPreview();
     });
-    $('edTempo').addEventListener('input', function () { state.song.tempo = +$('edTempo').value || 104; });
+    $('edAccomp').addEventListener('change', function () {
+      state.song.accomp = $('edAccomp').value;
+      state.song.accent = ''; // nový štýl = jeho predvolené prízvukovanie aj dĺžky
+      state.song.lengths = '';
+      showAccompDesc();
+      if (state.playing) play(); // počuť zmenu hneď
+    });
+    $('edArtic').addEventListener('change', function () {
+      state.song.artic = $('edArtic').value; showArticNow();
+      if (state.playing) play();
+    });
+    $('edAccent').addEventListener('change', function () {
+      state.song.accent = $('edAccent').value;
+      // dĺžky sa prispôsobia prízvuku (2222 → rovnaké, inak prvá kratšia); dajú sa zmeniť
+      state.song.lengths = Store.defaultLengths(state.song.accent);
+      $('edLengths').value = state.song.lengths;
+      if (state.playing) play();
+    });
+    $('edLengths').addEventListener('change', function () {
+      state.song.lengths = $('edLengths').value;
+      if (state.playing) play();
+    });
+    $('edTempo').addEventListener('input', function () { state.song.tempo = +$('edTempo').value || 104; showArticNow(); });
     const map = { edTitle: 'title', edStyle: 'style', edRegion: 'region', edVideo: 'videoUrl' };
     Object.keys(map).forEach(function (id) {
       $(id).addEventListener('input', function () { state.song[map[id]] = $(id).value; });
@@ -276,25 +351,33 @@
   }
 
   // ---- prehrávanie ----
-  function clearLoop() { if (state.loopTimer) { clearTimeout(state.loopTimer); state.loopTimer = null; } }
+  // Zvýrazní práve hrané políčko (i = poradie doby v prehrávanom úseku, -1 = koniec).
+  function markPlaying(i, from) {
+    document.querySelectorAll('.slot.playing').forEach(function (x) { x.classList.remove('playing'); });
+    if (i < 0) { state.playing = false; return; }
+    const n = slots();
+    const inp = slotInput(from + Math.floor(i / n), i % n);
+    if (inp) inp.classList.add('playing');
+  }
   function play() {
     const r = rangeBounds();
-    const tokens = Store.flatChords(state.song, r.from, r.to);
-    const parsed = tokens.map(function (t) { return Theory.parseChord(t); }).filter(Boolean);
-    if (!parsed.length || !window.Sound) return;
-    Sound.stop(); clearLoop();
-    Sound.playProgression(parsed, { bpm: state.song.tempo || 104, mode: 'band' });
-    if (state.loop) {
-      const barLen = (60 / (state.song.tempo || 104)) * 4;
-      const dur = (parsed.length * barLen + 0.35) * 1000;
-      const rep = function () {
-        Sound.playProgression(parsed, { bpm: state.song.tempo || 104, mode: 'band' });
-        state.loopTimer = setTimeout(rep, dur);
-      };
-      state.loopTimer = setTimeout(rep, dur);
-    }
+    const slotsList = Store.slotChords(state.song, r.from, r.to)
+      .map(function (t) { return t ? Theory.parseChord(t) : null; });
+    if (!slotsList.some(Boolean) || !window.Sound) return;
+    state.playing = true;
+    Sound.playSlots(slotsList, {
+      bpm: state.song.tempo || 104,
+      meter: state.song.timeSig || '2/4',
+      style: state.song.accomp,
+      artic: state.song.artic,
+      accent: state.song.accent,
+      lengths: Store.lengthsOf(state.song),
+      mode: 'band',
+      loop: state.loop,
+      onStep: function (i) { markPlaying(i, r.from); }
+    });
   }
-  function stop() { if (window.Sound) Sound.stop(); clearLoop(); }
+  function stop() { if (window.Sound) Sound.stop(); markPlaying(-1, 0); }
 
   // ---- uloženie ----
   function save() {
@@ -302,6 +385,10 @@
     s.title = $('edTitle').value.trim() || 'Bez názvu';
     s.key = $('edKey').value;
     s.timeSig = $('edTime').value;
+    s.accomp = $('edAccomp').value;
+    s.artic = $('edArtic').value;
+    s.accent = $('accentField').hidden ? '' : $('edAccent').value;
+    s.lengths = $('lengthsField').hidden ? '' : $('edLengths').value;
     s.tempo = +$('edTempo').value || 104;
     s.style = $('edStyle').value.trim();
     s.region = $('edRegion').value.trim();
@@ -325,7 +412,7 @@
     state.loop = !state.loop;
     $('loop').classList.toggle('on', state.loop);
     $('loop').setAttribute('aria-pressed', state.loop ? 'true' : 'false');
-    if (!state.loop) clearLoop();
+    if (state.playing) play(); // zmena počas hrania — spusti úsek znova s novým nastavením
   });
   $('save').addEventListener('click', save);
 })();

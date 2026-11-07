@@ -17,7 +17,11 @@
   if (!song) { $('notfound').hidden = false; return; }
 
   const state = { role: 'kontras', inst: 'viola' };
-  const parsed = Store.flatChords(song).map(function (t) { return Theory.parseChord(t); }).filter(Boolean);
+  // Po dobách: slotParsed[i] = akord, ktorý znie v i-tej dobe (null = ticho na začiatku).
+  const slotParsed = Store.slotChords(song).map(function (t) { return t ? Theory.parseChord(t) : null; });
+  const parsed = [];   // karty / linky — len doby s akordom
+  const cardSlot = []; // index doby pre každú kartu (na zvýraznenie počas hrania)
+  slotParsed.forEach(function (c, i) { if (c) { parsed.push(c); cardSlot.push(i); } });
 
   function keyDisplay(k) { const o = Theory.getKey(k); return o ? o.display : k; }
 
@@ -31,6 +35,8 @@
     const add = function (text, cls) { if (text) meta.appendChild(el('span', 'pill' + (cls ? ' ' + cls : ''), text)); };
     add(keyDisplay(song.key), 'mono');
     add(song.timeSig, 'mono');
+    const acc = Store.ACCOMP.find(function (a) { return a.id === Store.accompOf(song); });
+    if (acc) add('Spodky: ' + acc.label, 'peri');
     add((song.tempo || 104) + ' BPM', 'mono');
     add(song.style);
     add(song.region);
@@ -59,6 +65,7 @@
 
     parsed.forEach(function (ch, i) {
       const card = el('article', 'm-card');
+      card.dataset.slot = cardSlot[i];
       card.appendChild(el('div', 'ch', ch.token));
       const b = bassLine[i];
       const k = kontraLine[i];
@@ -88,11 +95,27 @@
   }
 
   // ---- prehrávanie ----
+  function markPlaying(i) {
+    document.querySelectorAll('.m-card.playing').forEach(function (x) { x.classList.remove('playing'); });
+    if (i < 0) return;
+    const card = document.querySelector('.m-card[data-slot="' + i + '"]');
+    if (card) card.classList.add('playing');
+  }
   $('play').addEventListener('click', function () {
     if (!parsed.length) return;
-    Sound.playProgression(parsed, { bpm: song.tempo || 104, mode: state.role === 'basista' ? 'bass' : 'band' });
+    Sound.playSlots(slotParsed, {
+      bpm: song.tempo || 104,
+      meter: song.timeSig || '2/4',
+      style: Store.accompOf(song),
+      artic: song.artic || 'auto',
+      accent: Store.accentOf(song),
+      lengths: Store.lengthsOf(song),
+      mode: state.role === 'basista' ? 'bass' : 'band',
+      inst: state.inst,
+      onStep: markPlaying
+    });
   });
-  $('stop').addEventListener('click', function () { Sound.stop(); });
+  $('stop').addEventListener('click', function () { Sound.stop(); markPlaying(-1); });
 
   // ---- zdieľanie / stiahnutie ----
   let toastTimer = null;

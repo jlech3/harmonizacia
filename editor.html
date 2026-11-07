@@ -38,6 +38,17 @@
         <label class="field"><span>Tónina</span><select id="edKey" class="control"></select></label>
         <label class="field"><span>Takt (metrum)</span>
           <select id="edTime" class="control"><option>2/4</option><option>3/4</option><option>4/4</option><option>6/8</option></select></label>
+        <label class="field"><span>Spodky (sprievod)</span>
+          <select id="edAccomp" class="control"></select>
+          <small class="hint" id="edAccompDesc" style="font-size:.78rem"></small></label>
+        <label class="field" id="articField"><span>Artikulácia</span>
+          <select id="edArtic" class="control"></select>
+          <small class="hint" id="edArticNow" style="font-size:.78rem"></small></label>
+        <label class="field" id="accentField"><span>Prízvuk</span>
+          <select id="edAccent" class="control"></select></label>
+        <label class="field" id="lengthsField"><span>Dĺžky osmín</span>
+          <select id="edLengths" class="control"></select>
+          <small class="hint" style="font-size:.78rem">Pri „kdxx" sa s rastúcim tempom dĺžky aj tak vyrovnávajú.</small></label>
         <label class="field"><span>Tempo (BPM)</span><input id="edTempo" class="control" type="number" min="40" max="240" step="1" value="104"></label>
         <label class="field"><span>Žáner / štýl</span><input id="edStyle" class="control" placeholder="napr. Horehronský duvaj"></label>
         <label class="field"><span>Región</span><input id="edRegion" class="control" placeholder="napr. Horehronie"></label>
